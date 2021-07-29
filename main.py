@@ -21,8 +21,8 @@ def run_blast():
     os.system(blast_cmd)
 
 
-def run_prodigal():
-    prodigal_cmd = "prodigal -i input/genome.fa -p meta -f sco"
+def run_prodigal(path):
+    prodigal_cmd = f"prodigal -i {path} -p meta -f sco"
     rt = os.popen(prodigal_cmd).read()
     rt = rt.split("\n")
     return rt[2:-1]
@@ -37,9 +37,9 @@ class Pipeline(object):
     def run(self):
         self.load_genome()
         self.cleanup_query_file()
-        self.genes = run_prodigal()
+        self.genes = run_prodigal(self.contig_file)
         self.prepare_query_file()
-        #run_blast()
+        run_blast()
         Annotate().run()
 
     def load_genome(self):
@@ -68,6 +68,11 @@ class Pipeline(object):
 
     @staticmethod
     def cleanup_query_file():
+        try:
+            os.mkdir("tmp")
+        except Exception as err:
+            pass
+
         with open("tmp/query.fa", "w") as fh:
             fh.write("")
 
