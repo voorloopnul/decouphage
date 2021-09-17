@@ -60,9 +60,12 @@ class Pipeline(object):
             if strand == "-":
                 sequence = sequence.reverse_complement()
 
+            # Translate protein to DNA and remove '*' in the end.
+            dna_sequence = str(sequence.translate()[0:-1])
+
             with open("tmp/query.fa", "a") as fh:
                 fh.write(f"{gene}\n")
-                fh.write(str(sequence.translate()[0:-1]) + "\n")
+                fh.write(dna_sequence + "\n")
 
     @staticmethod
     def cleanup_query_file():
