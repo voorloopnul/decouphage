@@ -11,8 +11,8 @@ RUN mkdir /data
 COPY requirements.txt /data/
 RUN pip install -r /data/requirements.txt
 
-COPY data/ncbi_phage_db/* /data/db/
-COPY data/genome.fa /data/genome.fa
+COPY db/* /data/db/
+COPY data/sequence.fasta /data/genome.fa
 COPY main.py /data/
 COPY src /data/src
 
