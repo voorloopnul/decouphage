@@ -36,7 +36,7 @@ class Pipeline(object):
         self.cleanup_query_file()
         self.genes = run_prodigal(self.contig_file)
         self.prepare_query_file()
-        run_blast()
+        #run_blast()
         Annotate().run()
 
     def load_genome(self):
