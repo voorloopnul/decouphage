@@ -52,7 +52,9 @@ class Pipeline(object):
         """
         for gene in self.genes:
             pos, start, end, strand = gene.split("_")
-            fixed_start = int(start) - 1  # python is 0 index based
+            # python is 0-index based and left not inclusive: (i, j], need to expand on left to include nucleotide
+            # in position i
+            fixed_start = int(start) - 1
             fixed_end = int(end)
 
             sequence = self.genome.seq[fixed_start:fixed_end]
@@ -60,7 +62,7 @@ class Pipeline(object):
             if strand == "-":
                 sequence = sequence.reverse_complement()
 
-            # Translate protein to DNA and remove '*' in the end.
+            # Translate protein to DNA and remove stop codon (*) in the end.
             dna_sequence = str(sequence.translate()[0:-1])
 
             with open("tmp/query.fa", "a") as fh:
