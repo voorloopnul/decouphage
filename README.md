@@ -39,6 +39,11 @@ Run with docker (Includes dependencies and databases):
 
     docker run decouphage/decouphage
 
+## Databases
+
+Decouphage database is derived from NCBI NR.
+
+
 ## Making custom databases
 
 Make blast database
