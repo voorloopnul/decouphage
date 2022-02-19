@@ -12,7 +12,7 @@ BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 
 def run_blast():
     print("blasting...")
-    # blast_cmd = f"blastp -db db/database.fa -query tmp/query.fa -evalue 1e-5 -outfmt '6 {BLAST_FMT}' -num_threads 8 -out tmp/blast.tsv"
+    blast_cmd = f"blastp -db db/database.fa -query tmp/query.fa -evalue 1e-5 -outfmt '6 {BLAST_FMT}' -num_threads 8 -out tmp/blast.tsv"
     os.system(blast_cmd)
 
 
