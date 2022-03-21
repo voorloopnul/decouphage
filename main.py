@@ -13,7 +13,7 @@ BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 def run_blast():
     print("blasting...")
     blast_cmd = f"blastp -db db/database.fa -query tmp/query.fa -evalue 1e-5 -outfmt '6 {BLAST_FMT}' -num_threads 8 -out tmp/blast.tsv"
-    os.system(blast_cmd)
+    # os.system(blast_cmd)
 
 
 def run_prodigal(path):
@@ -29,7 +29,7 @@ def run_prodigal(path):
 
 @dataclass
 class Orf:
-    pos: int
+    idx: int
     start: int
     end: int
     strand: str
@@ -89,7 +89,7 @@ class Pipeline(object):
         """
         for orf in self.orf_list:
             with open("tmp/query.fa", "a") as fh:
-                fh.write(f">{orf.pos}\n")
+                fh.write(f">{orf.idx}\n")
                 fh.write(orf.sequence + "\n")
 
     @staticmethod
