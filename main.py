@@ -24,7 +24,23 @@ def run_prodigal(path):
     prodigal_cmd = f"prodigal -i {path} -p meta -f sco"
     rt = os.popen(prodigal_cmd).read()
     rt = rt.split("\n")
-    return rt[2:-1]
+
+    _genes = []
+    cleaned_genes = []
+    for line in rt:
+        if "seqhdr" in line:
+            contig = line.split('"')[1]
+        if line.startswith(">"):
+            _genes.append(line+"_"+contig)
+
+    idx = 0
+    for gene in _genes:
+        gene = gene.split("_")
+        gene[0] = f">{idx}"
+        idx += 1
+        cleaned_genes.append("_".join(gene))
+
+    return cleaned_genes
 
 
 @dataclass
@@ -62,7 +78,9 @@ class Pipeline(object):
 
     def create_orf_objects(self):
         for gene in self.genes:
-            pos, start, end, strand = gene.split("_")
+            pos, start, end, strand, *contig = gene.split("_")
+            contig = "_".join(contig)
+
             orf = Orf(int(pos[1:]), int(start), int(end), strand, "", {})
 
             # python is 0-index based and left not inclusive: (i, j], need to expand on left to include nucleotide
