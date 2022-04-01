@@ -132,4 +132,5 @@ data/
 db/
 tmp/
 tools/
+output.gbk
 
