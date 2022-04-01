@@ -1,114 +1,81 @@
 import os
 import sys
-from dataclasses import dataclass
-
 from Bio import SeqIO
-from Bio.Seq import Seq
 from src.annotate import Annotate
-from src.output import write_demo
-
-BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
-
-
-def run_blast():
-    print("blasting...")
-    blast_cmd = f"blastp -db db/database.fa -query tmp/query.fa -evalue 1e-5 -outfmt '6 {BLAST_FMT}' -num_threads 8 -out tmp/blast.tsv"
-    # os.system(blast_cmd)
-
-
-def run_prodigal(path):
-    """
-    Expects as input a FASTA file and return the prodigal default output as a list:
-    ['>1_70_930_+', '>2_1282_2259_+', '>3_2276_2689_+', '>4_3116_3667_-', ... ]
-    """
-    prodigal_cmd = f"prodigal -i {path} -p meta -f sco"
-    rt = os.popen(prodigal_cmd).read()
-    rt = rt.split("\n")
-
-    _genes = []
-    cleaned_genes = []
-    for line in rt:
-        if "seqhdr" in line:
-            contig = line.split('"')[1]
-        if line.startswith(">"):
-            _genes.append(line+"_"+contig)
-
-    idx = 0
-    for gene in _genes:
-        gene = gene.split("_")
-        gene[0] = f">{idx}"
-        idx += 1
-        cleaned_genes.append("_".join(gene))
-
-    return cleaned_genes
-
-
-@dataclass
-class Orf:
-    idx: int
-    start: int
-    end: int
-    strand: str
-    sequence: str
-    annotation: dict
+from Bio.SeqFeature import SeqFeature, FeatureLocation
+import re
+from src import tools
+from src.output import write_gbk
 
 
 class Pipeline(object):
     def __init__(self, contig_file):
         self.contig_file = contig_file
         self.genome = None
-        self.genes = None
-        self.orf_list = []
+        self.orf_map = None
+        self.run()
 
     def run(self):
         self.load_genome()
         self.cleanup_query_file()
-        self.genes = run_prodigal(self.contig_file)
-        self.create_orf_objects()
+        self.orf_map = tools.run_prodigal(self.contig_file)
+        self.load_features()
         self.prepare_query_file()
-        run_blast()
+        tools.run_blast()
+
         qualifiers = Annotate().run()
-        write_demo(qualifiers, self.orf_list)
+        qualifiers = {record["qseqid"]: record for record in qualifiers}
+
+        self.enrich_features(qualifiers)
+        write_gbk(self.genome.values())
+
+    def enrich_features(self, qualifiers):
+        for contig in self.genome.values():
+            for feature in contig.features:
+                blast_result = qualifiers.get(int(feature.id), {})
+
+                product = blast_result.get("stitle", "Unknown")
+                pattern = r'\[.*?\]'
+                product = re.sub(pattern, '', product).rstrip()
+                product = product.replace("TPA: MAG TPA", "")
+
+                tag = 'PREF_{l:04d}'.format(l=int(feature.id))
+
+                quals = {
+                    'gene': feature.id,
+                    'product': product,
+                    'locus_tag': tag,
+                    'translation': str(feature.extract(contig.seq).translate()),
+                    "protein_id": blast_result.get("sseqid", "N/A")
+                }
+                feature.qualifiers = quals
+
+    def load_features(self):
+        for contig_label, orf_list in self.orf_map.items():
+            print(contig_label)
+            contig = self.genome[contig_label]
+            for orf in orf_list:
+                idx, start, end, strand = orf.split("_")
+                feature = SeqFeature(
+                    FeatureLocation(int(start) - 1, int(end)),
+                    strand=1 if strand == "+" else -1,
+                    type="CDS",
+                    qualifiers={},
+                    id=idx[1:]
+                )
+                contig.features.append(feature)
 
     def load_genome(self):
-        print(self.contig_file)
-        for record in SeqIO.parse(self.contig_file, "fasta"):
-            self.genome = record
-            break
-
-    def create_orf_objects(self):
-        for gene in self.genes:
-            pos, start, end, strand, *contig = gene.split("_")
-            contig = "_".join(contig)
-
-            orf = Orf(int(pos[1:]), int(start), int(end), strand, "", {})
-
-            # python is 0-index based and left not inclusive: (i, j], need to expand on left to include nucleotide
-            # in position i
-
-            fixed_start = orf.start - 1
-            fixed_end = orf.end
-
-            sequence = self.genome.seq[fixed_start:fixed_end]
-            sequence = Seq(sequence)
-
-            if strand == "-":
-                sequence = sequence.reverse_complement()
-
-            # Translate protein to DNA and remove stop codon (*) in the end.
-            dna_sequence = str(sequence.translate()[0:-1])
-            orf.sequence = dna_sequence
-            self.orf_list.append(orf)
+        self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
+        for contig in self.genome.values():
+            contig.annotations = {"molecule_type": "DNA"}
 
     def prepare_query_file(self):
-        """
-        Create a query file containing the original gene header from prodigal and the protein sequence extracted from
-        the genome.
-        """
-        for orf in self.orf_list:
-            with open("tmp/query.fa", "a") as fh:
-                fh.write(f">{orf.idx}\n")
-                fh.write(orf.sequence + "\n")
+        with open("tmp/query.fa", "a") as fh:
+            for contig in self.genome.values():
+                for feature in contig.features:
+                    fh.write(f">{feature.id}\n")
+                    fh.write(str(feature.extract(contig.seq).translate()) + "\n")
 
     @staticmethod
     def cleanup_query_file():
@@ -124,4 +91,4 @@ class Pipeline(object):
 if __name__ == '__main__':
     print("Decouphage 0.1")
     input_path = sys.argv[1]
-    Pipeline(input_path).run()
+    Pipeline(input_path)
