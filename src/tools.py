@@ -15,7 +15,7 @@ def run_prodigal(path):
     Expects as input a FASTA file and return the prodigal default output as a list:
     ['>1_70_930_+', '>2_1282_2259_+', '>3_2276_2689_+', '>4_3116_3667_-', ... ]
     """
-    prodigal_cmd = f"prodigal -i {path} -p meta -f sco"
+    prodigal_cmd = f"prodigal -i {path} -f sco"
     rt = os.popen(prodigal_cmd).read()
     rt = rt.split("\n")
 
