@@ -1,11 +1,13 @@
-import os
 from collections import defaultdict
+import logging
+import os
 
+logging.basicConfig(level=logging.INFO)
 BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 
 
 def run_blast():
-    print("blasting...")
+    logging.info("Blasting sequences...")
     blast_cmd = f"blastp -db db/database.fa -query tmp/query.fa -evalue 1e-5 -outfmt '6 {BLAST_FMT}' -num_threads 8 -out tmp/blast.tsv"
     os.system(blast_cmd)
 

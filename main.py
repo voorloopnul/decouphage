@@ -23,10 +23,9 @@ class Pipeline(object):
         self.prepare_query_file()
         tools.run_blast()
 
-        qualifiers = Annotate().run()
-        qualifiers = {record["qseqid"]: record for record in qualifiers}
-
+        qualifiers = {record["qseqid"]: record for record in Annotate().run()}
         self.enrich_features(qualifiers)
+
         write_gbk(self.genome.values())
 
     def enrich_features(self, qualifiers):
@@ -45,14 +44,13 @@ class Pipeline(object):
                     'gene': feature.id,
                     'product': product,
                     'locus_tag': tag,
-                    'translation': str(feature.extract(contig.seq).translate()),
+                    'translation': self.cleanup_sequence(feature, contig),
                     "protein_id": blast_result.get("sseqid", "N/A")
                 }
                 feature.qualifiers = quals
 
     def load_features(self):
         for contig_label, orf_list in self.orf_map.items():
-            print(contig_label)
             contig = self.genome[contig_label]
             for orf in orf_list:
                 idx, start, end, strand = orf.split("_")
@@ -75,7 +73,14 @@ class Pipeline(object):
             for contig in self.genome.values():
                 for feature in contig.features:
                     fh.write(f">{feature.id}\n")
-                    fh.write(str(feature.extract(contig.seq).translate()) + "\n")
+                    fh.write(self.cleanup_sequence(feature, contig) + "\n")
+
+    @staticmethod
+    def cleanup_sequence(feature, contig):
+        sequence = str(feature.extract(contig.seq).translate(table=11))
+        if sequence.endswith("*"):
+            sequence = sequence[:-1]
+        return sequence
 
     @staticmethod
     def cleanup_query_file():
@@ -89,6 +94,6 @@ class Pipeline(object):
 
 
 if __name__ == '__main__':
-    print("Decouphage 0.1")
+    print("Decouphage 0.0.1")
     input_path = sys.argv[1]
     Pipeline(input_path)
