@@ -1,12 +1,12 @@
 import os
+import re
 import sys
 import datetime
 from pathlib import Path
-
 from Bio import SeqIO
-from src.annotate import Annotate
 from Bio.SeqFeature import SeqFeature, FeatureLocation
-import re
+
+from src.annotate import Annotate
 from src import tools
 from src.output import write_gbk
 
@@ -37,18 +37,18 @@ class Pipeline(object):
                 blast_result = qualifiers.get(int(feature.id), {})
 
                 product = blast_result.get("stitle", "Unknown")
-                pattern = r'\[.*?\]'
-                product = re.sub(pattern, '', product).rstrip()
+                pattern = r"\[.*?\]"
+                product = re.sub(pattern, "", product).rstrip()
                 product = product.replace("TPA: MAG TPA", "")
 
-                tag = 'PREF_{l:04d}'.format(l=int(feature.id))
+                tag = "PREF_{l:04d}".format(l=int(feature.id))
 
                 quals = {
-                    'gene': feature.id,
-                    'product': product,
-                    'locus_tag': tag,
-                    'translation': self.cleanup_sequence(feature, contig),
-                    "protein_id": blast_result.get("sseqid", "N/A")
+                    "gene": feature.id,
+                    "product": product,
+                    "locus_tag": tag,
+                    "translation": self.cleanup_sequence(feature, contig),
+                    "protein_id": blast_result.get("sseqid", "N/A"),
                 }
                 feature.qualifiers = quals
 
@@ -62,7 +62,7 @@ class Pipeline(object):
                     strand=1 if strand == "+" else -1,
                     type="CDS",
                     qualifiers={},
-                    id=idx[1:]
+                    id=idx[1:],
                 )
                 contig.features.append(feature)
 
@@ -99,7 +99,7 @@ class Pipeline(object):
             fh.write("")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Decouphage 0.0.1")
     input_path = sys.argv[1]
     Pipeline(input_path)
