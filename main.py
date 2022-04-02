@@ -1,5 +1,8 @@
 import os
 import sys
+import datetime
+from pathlib import Path
+
 from Bio import SeqIO
 from src.annotate import Annotate
 from Bio.SeqFeature import SeqFeature, FeatureLocation
@@ -64,9 +67,12 @@ class Pipeline(object):
                 contig.features.append(feature)
 
     def load_genome(self):
+        today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
+
         for contig in self.genome.values():
-            contig.annotations = {"molecule_type": "DNA"}
+            contig.annotations = {"molecule_type": "DNA", "date": today_date}
+            contig.id = Path(self.contig_file).stem
 
     def prepare_query_file(self):
         with open("tmp/query.fa", "a") as fh:
