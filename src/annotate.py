@@ -1,5 +1,8 @@
 import re
 import pandas as pd
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 header = [
     "qseqid", "sseqid", "pident", "length", "evalue", "bitscore", "slen", "stitle", "qlen"
@@ -38,22 +41,21 @@ class Annotate(object):
             _df = self.get_df_for_genes_same_length_range(_df)
 
             if _df.empty:
-                print(f"{gene} Not a good candidate found...")
-                #_df = self.get_df_for_spcific_gene(gene)
+                logging.info(f"No good candidate found for CDS #{gene}")
 
             for index, row in _df.iterrows():
                 if "hypothetical" not in row['stitle']:
                     if "putative" not in row["stitle"]:
                         if "unknown" not in row["stitle"]:
-                            print("A", row.to_dict())
                             blast_result = row.to_dict()
+                            logging.debug(f"1st: {blast_result}")
                             blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
                             qualifiers.append(blast_result)
                             break
             else:
                 for index, row in _df.iterrows():
-                    print("B", row.to_dict())
                     blast_result = row.to_dict()
+                    logging.debug(f"2nd: {blast_result}")
                     blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
                     qualifiers.append(blast_result)
                     break
