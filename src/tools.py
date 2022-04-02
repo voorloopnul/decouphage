@@ -33,3 +33,26 @@ def run_prodigal(path):
             features[contig].append("_".join(orf))
 
     return features
+
+
+def run_phanotate(path):
+    phanotate_cmd = f"phanotate.py {path}"
+    rt = os.popen(phanotate_cmd).read()
+    rt = rt.split("\n")
+
+    features = defaultdict(list)
+    idx = 1
+    for line in rt:
+        if line.split("\t") == [""]:
+            break
+
+        if not line.startswith("#"):
+            orf = line.split("\t")[0:4]
+            strand = orf[2]
+            contig = orf[3]
+            start, end = sorted([int(x) for x in orf[0:2]])
+            orf = "_".join([f">{idx}", str(start), str(end), strand])
+            idx += 1
+            features[contig].append(orf)
+
+    return features
