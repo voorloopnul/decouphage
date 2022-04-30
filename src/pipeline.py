@@ -12,24 +12,34 @@ from src.output import write_gbk
 
 
 class Pipeline(object):
-    def __init__(self, contig_file):
-        self.contig_file = contig_file
+    def __init__(self, input_file, prodigal, threads, output_file):
+        self.use_prodigal = prodigal
+        self.blast_threads = threads
+        self.output_file = output_file
+        self.contig_file = input_file
+
         self.genome = None
         self.orf_map = None
         self.run()
 
+    def orf_calling(self):
+        if self.use_prodigal:
+            self.orf_map = tools.run_prodigal(self.contig_file)
+        else:
+            self.orf_map = tools.run_phanotate(self.contig_file)
+
     def run(self):
         self.load_genome()
         self.cleanup_query_file()
-        self.orf_map = tools.run_prodigal(self.contig_file)
+        self.orf_calling()
         self.load_features()
         self.prepare_query_file()
-        tools.run_blast()
+        tools.run_blast(self.blast_threads)
 
         qualifiers = {record["qseqid"]: record for record in Annotate().run()}
         self.enrich_features(qualifiers)
 
-        write_gbk(self.genome.values())
+        write_gbk(self.genome.values(), self.output_file)
 
     def enrich_features(self, qualifiers):
         for contig in self.genome.values():

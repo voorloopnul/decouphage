@@ -6,10 +6,20 @@ logging.basicConfig(level=logging.INFO)
 BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 
 
-def run_blast():
+def run_blast(threads):
     logging.info("Blasting sequences...")
-    blast_cmd = f"blastp -db db/database.fa -query tmp/query.fa -evalue 1e-5 -outfmt '6 {BLAST_FMT}' -num_threads 8 -out tmp/blast.tsv"
-    os.system(blast_cmd)
+
+    blast_cmd = [
+        "blastp",
+        "-db", "db/database.fa",
+        "-query", "tmp/query.fa",
+        "-evalue", "1e-5",
+        "-outfmt", f"'6 {BLAST_FMT}'",
+        "-num_threads", f"{threads}",
+        "-out", "tmp/blast.tsv"
+    ]
+
+    os.system(" ".join(blast_cmd))
 
 
 def run_prodigal(path):
@@ -17,7 +27,7 @@ def run_prodigal(path):
     Expects as input a FASTA file and return the prodigal default output as a list:
     ['>1_70_930_+', '>2_1282_2259_+', '>3_2276_2689_+', '>4_3116_3667_-', ... ]
     """
-    prodigal_cmd = f"prodigal -i {path} -f sco"
+    prodigal_cmd = f"prodigal -i {path} -f sco -p meta"
     rt = os.popen(prodigal_cmd).read()
     rt = rt.split("\n")
 
