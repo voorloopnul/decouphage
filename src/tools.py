@@ -4,10 +4,11 @@ import os
 
 logging.basicConfig(level=logging.INFO)
 BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
+logger = logging.getLogger(__name__)
 
 
 def run_blast(threads):
-    logging.info("Blasting sequences...")
+    logger.info("Blasting sequences...")
 
     blast_cmd = [
         "blastp",

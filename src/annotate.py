@@ -3,6 +3,7 @@ import pandas as pd
 import logging
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 header = [
     "qseqid", "sseqid", "pident", "length", "evalue", "bitscore", "slen", "stitle", "qlen"
@@ -41,7 +42,7 @@ class Annotate(object):
             _df = self.get_df_for_genes_same_length_range(_df)
 
             if _df.empty:
-                logging.info(f"No good candidate found for CDS #{gene}")
+                logger.info(f"No good candidate found for CDS #{gene}")
 
             for index, row in _df.iterrows():
                 if "hypothetical" not in row['stitle']:
