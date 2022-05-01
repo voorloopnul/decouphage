@@ -34,7 +34,7 @@ class Pipeline(object):
         self.orf_calling()
         self.load_features()
         self.prepare_query_file()
-        tools.run_blast(self.blast_threads)
+        # tools.run_blast(self.blast_threads)
 
         qualifiers = {record["qseqid"]: record for record in Annotate().run()}
         self.enrich_features(qualifiers)
