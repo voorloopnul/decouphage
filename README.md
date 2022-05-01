@@ -1,4 +1,4 @@
-# Decouphage: the art of decorating a Phage genome by gluing colored gene labels onto it.
+# Decouphage: the art of decorating a Phage genome by gluing colorful features into it.
 
 ## Description
 
