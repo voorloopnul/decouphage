@@ -36,14 +36,13 @@ class Annotate(object):
         return _df
 
     def first_pass(self, _df):
+        bad_words = ["hypothetical", "putative", "unknown"]
         for index, row in _df.iterrows():
-            if "hypothetical" not in row['stitle']:
-                if "putative" not in row["stitle"]:
-                    if "unknown" not in row["stitle"]:
-                        blast_result = row.to_dict()
-                        logging.debug(f"1st: {blast_result}")
-                        blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
-                        return blast_result
+            if not any(word in row["stitle"] for word in bad_words):
+                blast_result = row.to_dict()
+                logging.debug(f"1st: {blast_result}")
+                blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
+                return blast_result
         return None
 
     def second_pass(self, _df):
@@ -55,16 +54,15 @@ class Annotate(object):
         return None
 
     def third_pass(self, _df):
+        bad_words = ["hypothetical", "putative", "unknown"]
         for index, row in _df.iterrows():
-            if "hypothetical" not in row['stitle']:
-                if "putative" not in row["stitle"]:
-                    if "unknown" not in row["stitle"]:
-                        blast_result = row.to_dict()
-                        logging.debug(f"1st: {blast_result}")
-                        blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
-                        print(blast_result["stitle"], blast_result["slen"], blast_result["qlen"],
-                              blast_result["pident"])
-                        return blast_result
+            if not any(word in row["stitle"] for word in bad_words):
+                blast_result = row.to_dict()
+                logging.debug(f"1st: {blast_result}")
+                blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
+                print(blast_result["stitle"], blast_result["slen"], blast_result["qlen"],
+                      blast_result["pident"])
+                return blast_result
         return None
 
     def run(self):
