@@ -35,21 +35,25 @@ class Annotate(object):
         _df = _df[_df["slen"] < _df["qlen"] + offset]
         return _df
 
+    @staticmethod
+    def remove_species(stitle):
+        return re.sub("[\(\[].*?[\)\]]", "", stitle)
+
     def first_pass(self, _df):
         bad_words = ["hypothetical", "putative", "unknown"]
         for index, row in _df.iterrows():
             if not any(word in row["stitle"] for word in bad_words):
                 blast_result = row.to_dict()
+                blast_result["stitle"] = self.remove_species(blast_result["stitle"])
                 logging.debug(f"1st: {blast_result}")
-                blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
                 return blast_result
         return None
 
     def second_pass(self, _df):
         for index, row in _df.iterrows():
             blast_result = row.to_dict()
+            blast_result["stitle"] = self.remove_species(blast_result["stitle"])
             logging.debug(f"2nd: {blast_result}")
-            blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
             return blast_result
         return None
 
@@ -58,10 +62,8 @@ class Annotate(object):
         for index, row in _df.iterrows():
             if not any(word in row["stitle"] for word in bad_words):
                 blast_result = row.to_dict()
-                logging.debug(f"1st: {blast_result}")
-                blast_result["stitle"] = re.sub("[\(\[].*?[\)\]]", "", blast_result["stitle"])
-                print(blast_result["stitle"], blast_result["slen"], blast_result["qlen"],
-                      blast_result["pident"])
+                blast_result["stitle"] = self.remove_species(blast_result["stitle"])
+                logging.debug(f"3rd: {blast_result}")
                 return blast_result
         return None
 
