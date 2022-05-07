@@ -50,7 +50,20 @@ Make blast database
 
     makeblastdb -in database.fa -parse_seqids -blastdb_version 5 -dbtype prot
 
-# Usage Examples
+# Usage
+
+## Options
+
+    Usage: decouphage.py [OPTIONS] INPUT_FILE
+
+    Options:
+      --prodigal             Use prodigal for orf calling instead of phanotate.
+      -o, --output TEXT
+      -t, --threads INTEGER  [default: 1]
+      --help                 Show this message and exit.
+
+
+## Examples
 
 Using prodigal:
 

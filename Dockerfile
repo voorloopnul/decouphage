@@ -13,8 +13,8 @@ RUN pip install -r /data/requirements.txt
 
 COPY db/* /data/db/
 COPY data/sequence.fasta /data/genome.fa
-COPY main.py /data/
+COPY decouphage.py /data/
 COPY src /data/src
 
 WORKDIR data
-CMD python3 main.py /data/genome.fa
+CMD python3 decouphage.py /data/genome.fa
