@@ -1,6 +1,8 @@
 import datetime
 import os
 import re
+import tempfile
+import uuid
 from pathlib import Path
 
 from Bio import SeqIO
@@ -18,6 +20,10 @@ class Pipeline(object):
         self.output_file = output_file
         self.contig_file = input_file
 
+        tmp_dir = tempfile.TemporaryDirectory()
+        self.tmp_query_file = os.path.join(tmp_dir.name, 'query.fa')
+        self.tmp_blast_file = os.path.join(tmp_dir.name, 'blast.tsv')
+
         self.genome = None
         self.orf_map = None
         self.run()
@@ -29,14 +35,13 @@ class Pipeline(object):
             self.orf_map = tools.run_phanotate(self.contig_file)
 
     def run(self):
-        self.load_genome()
-        self.cleanup_query_file()
+        self.load_genome_from_file()
         self.orf_calling()
         self.load_features()
         self.prepare_query_file()
-        tools.run_blast(self.blast_threads)
+        tools.run_blast(self.blast_threads, self.tmp_query_file, self.tmp_blast_file)
 
-        qualifiers = {record["qseqid"]: record for record in Annotate().run()}
+        qualifiers = {record["qseqid"]: record for record in Annotate(self.tmp_blast_file).run()}
         self.enrich_features(qualifiers)
 
         write_gbk(self.genome.values(), self.output_file)
@@ -76,7 +81,7 @@ class Pipeline(object):
                 )
                 contig.features.append(feature)
 
-    def load_genome(self):
+    def load_genome_from_file(self):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
@@ -85,7 +90,7 @@ class Pipeline(object):
             contig.id = Path(self.contig_file).stem
 
     def prepare_query_file(self):
-        with open("tmp/query.fa", "a") as fh:
+        with open(self.tmp_query_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
                     fh.write(f">{feature.id}\n")
@@ -97,13 +102,3 @@ class Pipeline(object):
         if sequence.endswith("*"):
             sequence = sequence[:-1]
         return sequence
-
-    @staticmethod
-    def cleanup_query_file():
-        try:
-            os.mkdir("tmp")
-        except Exception as err:
-            pass
-
-        with open("tmp/query.fa", "w") as fh:
-            fh.write("")

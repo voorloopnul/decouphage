@@ -7,17 +7,17 @@ BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 logger = logging.getLogger(__name__)
 
 
-def run_blast(threads):
+def run_blast(threads, query_file, blast_file):
     logger.info("Blasting sequences...")
 
     blast_cmd = [
         "blastp",
         "-db", "db/nr.fa",
-        "-query", "tmp/query.fa",
+        "-query", query_file,
         "-evalue", "1e-5",
         "-outfmt", f"'6 {BLAST_FMT}'",
         "-num_threads", f"{threads}",
-        "-out", "tmp/blast.tsv"
+        "-out", blast_file
     ]
 
     os.system(" ".join(blast_cmd))

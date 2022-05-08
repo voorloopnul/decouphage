@@ -11,8 +11,8 @@ header = [
 
 
 class Annotate(object):
-    def __init__(self):
-        df = pd.read_csv("tmp/blast.tsv", delimiter="\t", header=None)
+    def __init__(self, tmp_blast_file):
+        df = pd.read_csv(tmp_blast_file, delimiter="\t", header=None)
         df.columns = header
 
         # df = df.head(10)
