@@ -12,7 +12,7 @@ def run_blast(threads):
 
     blast_cmd = [
         "blastp",
-        "-db", "db/database.fa",
+        "-db", "db/nr.fa",
         "-query", "tmp/query.fa",
         "-evalue", "1e-5",
         "-outfmt", f"'6 {BLAST_FMT}'",
