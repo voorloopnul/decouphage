@@ -2,7 +2,6 @@ import datetime
 import os
 import re
 import tempfile
-import uuid
 from pathlib import Path
 
 from Bio import SeqIO
@@ -14,11 +13,14 @@ from src.output import write_gbk
 
 
 class Pipeline(object):
-    def __init__(self, input_file, prodigal, threads, output_file):
+    def __init__(self, database, input_file, prodigal, threads, output_file):
+        self.database = database
+        self.contig_file = input_file
+
+        # Operational options
         self.use_prodigal = prodigal
         self.blast_threads = threads
         self.output_file = output_file
-        self.contig_file = input_file
 
         tmp_dir = tempfile.TemporaryDirectory()
         self.tmp_query_file = os.path.join(tmp_dir.name, 'query.fa')
@@ -39,7 +41,7 @@ class Pipeline(object):
         self.orf_calling()
         self.load_features()
         self.prepare_query_file()
-        tools.run_blast(self.blast_threads, self.tmp_query_file, self.tmp_blast_file)
+        tools.run_blast(self.blast_threads, self.tmp_query_file, self.tmp_blast_file, self.database)
 
         qualifiers = {record["qseqid"]: record for record in Annotate(self.tmp_blast_file).run()}
         self.enrich_features(qualifiers)
