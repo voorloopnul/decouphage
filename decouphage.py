@@ -14,12 +14,13 @@ logger = logging.getLogger(__name__)
 @click.option('-d', '--db', 'database', type=click.Path(exists=True))
 @click.option('-o', '--output', 'output', default='output.gbk')
 @click.option('-t', '--threads', default=1, show_default=True)
+@click.option('--tmp_dir', 'tmp_dir')
 @click.argument('input_file', type=click.Path(exists=True))
-def run_pipeline(prodigal, database, output, input_file, threads):
+def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir):
     logger.info(json.dumps(locals(), indent=4, sort_keys=True))
     start_time = time.monotonic()
 
-    Pipeline(database, input_file, prodigal, threads, output)
+    Pipeline(database, input_file, prodigal, threads, output, tmp_dir)
     end_time = time.monotonic()
 
     total_time = timedelta(seconds=end_time - start_time)

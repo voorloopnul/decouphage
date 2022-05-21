@@ -13,7 +13,7 @@ from src.output import write_gbk
 
 
 class Pipeline(object):
-    def __init__(self, database, input_file, prodigal, threads, output_file):
+    def __init__(self, database, input_file, prodigal, threads, output_file, tmp_dir):
         self.database = database
         self.contig_file = input_file
 
@@ -22,9 +22,12 @@ class Pipeline(object):
         self.blast_threads = threads
         self.output_file = output_file
 
-        tmp_dir = tempfile.TemporaryDirectory()
-        self.tmp_query_file = os.path.join(tmp_dir.name, 'query.fa')
-        self.tmp_blast_file = os.path.join(tmp_dir.name, 'blast.tsv')
+        tmp_dir_handler = tempfile.TemporaryDirectory()
+        self.tmp_dir = tmp_dir if tmp_dir else tmp_dir_handler.name
+
+        self.tmp_genome_file = os.path.join(self.tmp_dir, 'genome.fa')
+        self.tmp_query_file = os.path.join(self.tmp_dir, 'query.fa')
+        self.tmp_blast_file = os.path.join(self.tmp_dir, 'blast.tsv')
 
         self.genome = None
         self.orf_map = None
@@ -85,6 +88,13 @@ class Pipeline(object):
 
     def load_genome_from_file(self):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
+
+        with open(self.contig_file, "rU") as input_handle:
+            with open(self.tmp_genome_file, "w") as output_handle:
+                sequences = SeqIO.parse(input_handle, "genbank")
+                SeqIO.write(sequences, output_handle, "fasta")
+
+        self.contig_file = self.tmp_genome_file
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
         for contig in self.genome.values():
