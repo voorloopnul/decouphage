@@ -25,9 +25,10 @@ class Pipeline(object):
         tmp_dir_handler = tempfile.TemporaryDirectory()
         self.tmp_dir = tmp_dir if tmp_dir else tmp_dir_handler.name
 
-        self.tmp_genome_file = os.path.join(self.tmp_dir, 'genome.fa')
-        self.tmp_query_file = os.path.join(self.tmp_dir, 'query.fa')
-        self.tmp_blast_file = os.path.join(self.tmp_dir, 'blast.tsv')
+        self.tmp_query_gbk_file = os.path.join(self.tmp_dir, 'input.gbk')  # genbank
+        self.tmp_query_fna_file = os.path.join(self.tmp_dir, 'input.fna')  # contigs
+        self.tmp_query_faa_file = os.path.join(self.tmp_dir, 'query.faa')  # ORFs
+        self.tmp_blast_tsv_file = os.path.join(self.tmp_dir, 'blast.tsv')  # Blast result
 
         self.genome = None
         self.orf_map = None
@@ -44,9 +45,9 @@ class Pipeline(object):
         self.orf_calling()
         self.load_features()
         self.prepare_query_file()
-        tools.run_blast(self.blast_threads, self.tmp_query_file, self.tmp_blast_file, self.database)
+        tools.run_blast(self.blast_threads, self.tmp_query_faa_file, self.tmp_blast_tsv_file, self.database)
 
-        qualifiers = {record["qseqid"]: record for record in Annotate(self.tmp_blast_file).run()}
+        qualifiers = {record["qseqid"]: record for record in Annotate(self.tmp_blast_tsv_file).run()}
         self.enrich_features(qualifiers)
 
         write_gbk(self.genome.values(), self.output_file)
@@ -90,11 +91,11 @@ class Pipeline(object):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
 
         with open(self.contig_file, "rU") as input_handle:
-            with open(self.tmp_genome_file, "w") as output_handle:
+            with open(self.tmp_query_fna_file, "w") as output_handle:
                 sequences = SeqIO.parse(input_handle, "genbank")
                 SeqIO.write(sequences, output_handle, "fasta")
 
-        self.contig_file = self.tmp_genome_file
+        self.contig_file = self.tmp_query_fna_file
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
         for contig in self.genome.values():
@@ -102,7 +103,7 @@ class Pipeline(object):
             contig.id = Path(self.contig_file).stem
 
     def prepare_query_file(self):
-        with open(self.tmp_query_file, "a") as fh:
+        with open(self.tmp_query_faa_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
                     fh.write(f">{feature.id}\n")

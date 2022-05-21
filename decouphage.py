@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 @click.option('-o', '--output', 'output', default='output.gbk')
 @click.option('-t', '--threads', default=1, show_default=True)
 @click.option('--tmp_dir', 'tmp_dir')
+@click.option('--no-orf-calling', 'merge_gbk', is_flag=True, help="Annotate proteins from gbk file")
 @click.argument('input_file', type=click.Path(exists=True))
-def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir):
+def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir, merge_gbk):
     logger.info(json.dumps(locals(), indent=4, sort_keys=True))
     start_time = time.monotonic()
 
@@ -24,7 +25,7 @@ def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir):
     end_time = time.monotonic()
 
     total_time = timedelta(seconds=end_time - start_time)
-    logger.info(f"Phage annotaion took {total_time}")
+    logger.info(f"Phage annotation took {total_time}")
 
 
 if __name__ == '__main__':
