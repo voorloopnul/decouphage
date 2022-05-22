@@ -1,7 +1,9 @@
 import datetime
 import os
 import re
+import shutil
 import tempfile
+from collections import defaultdict
 from pathlib import Path
 
 from Bio import SeqIO
@@ -12,15 +14,33 @@ from src.annotate import Annotate
 from src.output import write_gbk
 
 
+def cds_calling_from_genbank(input_handle):
+    features = defaultdict(list)
+
+    contigs = SeqIO.parse(input_handle, "genbank")
+    idx = 1
+    for contig in contigs:
+        for feature in contig.features:
+            if feature.type == "CDS":
+                strand = "+" if feature.location.strand == 1 else "-"
+                orf = f">{idx}_{feature.location.start+1}_{feature.location.end}_{strand}"
+                features[contig.name].append(orf)
+                idx += 1
+    return features
+
+
 class Pipeline(object):
-    def __init__(self, database, input_file, prodigal, threads, output_file, tmp_dir):
-        self.database = database
+    def __init__(self, database: str, input_file: str, prodigal: bool, threads: int, output_file: str, tmp_dir: str,
+                 merge_gbk: bool):
+
+        self.database = database if database else "db/nr/nr.fa"
         self.contig_file = input_file
 
         # Operational options
         self.use_prodigal = prodigal
         self.blast_threads = threads
         self.output_file = output_file
+        self.merge_gbk = merge_gbk
 
         tmp_dir_handler = tempfile.TemporaryDirectory()
         self.tmp_dir = tmp_dir if tmp_dir else tmp_dir_handler.name
@@ -35,14 +55,20 @@ class Pipeline(object):
         self.run()
 
     def orf_calling(self):
+        # Don't call ORFs, just copy it from the input gbk file.
+        if self.merge_gbk:
+            return cds_calling_from_genbank(self.tmp_query_gbk_file)
+
+        # Use prodigal for ORF calling
         if self.use_prodigal:
-            self.orf_map = tools.run_prodigal(self.contig_file)
-        else:
-            self.orf_map = tools.run_phanotate(self.contig_file)
+            return tools.run_prodigal(self.tmp_query_fna_file)
+
+        # Use phanotate for ORF calling
+        return tools.run_phanotate(self.tmp_query_fna_file)
 
     def run(self):
         self.load_genome_from_file()
-        self.orf_calling()
+        self.orf_map = self.orf_calling()
         self.load_features()
         self.prepare_query_file()
         tools.run_blast(self.blast_threads, self.tmp_query_faa_file, self.tmp_blast_tsv_file, self.database)
@@ -94,6 +120,7 @@ class Pipeline(object):
             with open(self.tmp_query_fna_file, "w") as output_handle:
                 sequences = SeqIO.parse(input_handle, "genbank")
                 SeqIO.write(sequences, output_handle, "fasta")
+                shutil.copyfile(self.contig_file, self.tmp_query_gbk_file)
 
         self.contig_file = self.tmp_query_fna_file
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))

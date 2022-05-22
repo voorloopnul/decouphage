@@ -21,7 +21,7 @@ def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir, merge
     logger.info(json.dumps(locals(), indent=4, sort_keys=True))
     start_time = time.monotonic()
 
-    Pipeline(database, input_file, prodigal, threads, output, tmp_dir)
+    Pipeline(database, input_file, prodigal, threads, output, tmp_dir, merge_gbk)
     end_time = time.monotonic()
 
     total_time = timedelta(seconds=end_time - start_time)
