@@ -8,7 +8,7 @@ from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from src import tools
 from src.annotate import Annotate
-from src.core import cds_calling_from_genbank, probe_filetype
+from src.core import cds_calling_from_genbank, probe_filetype, get_database_default_path
 from src.output import write_gbk
 
 
@@ -16,7 +16,7 @@ class Pipeline(object):
     def __init__(self, database: str, input_file: str, prodigal: bool, threads: int, output_file: str, tmp_dir: str,
                  merge_gbk: bool):
 
-        self.database = database if database else "db/nr/nr.fa"
+        self.database = database if database else str(get_database_default_path())
         self.contig_file = input_file
 
         # Operational options

@@ -1,4 +1,6 @@
 from collections import defaultdict
+from pathlib import Path
+
 from Bio import SeqIO
 
 
@@ -25,3 +27,7 @@ def probe_filetype(input_file):
         return "FASTA"
     else:
         return "GENBANK"
+
+
+def get_database_default_path():
+    return Path.home() / Path(".decouphage/db/nr/nr.fa")
