@@ -37,18 +37,6 @@ class Pipeline(object):
         self.orf_map = None
         self.run()
 
-    def orf_calling(self):
-        # Don't call ORFs, just copy it from the input gbk file.
-        if self.merge_gbk:
-            return cds_calling_from_genbank(self.tmp_input_gbk_file)
-
-        # Use prodigal for ORF calling
-        if self.use_prodigal:
-            return tools.run_prodigal(self.tmp_input_fna_file)
-
-        # Use phanotate for ORF calling
-        return tools.run_phanotate(self.tmp_input_fna_file)
-
     def run(self):
         self.load_genome_from_file()
         self.annotate_contigs()
@@ -77,6 +65,46 @@ class Pipeline(object):
         self.contig_file = self.tmp_input_fna_file
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
+    def annotate_contigs(self):
+        today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
+        for contig in self.genome.values():
+            contig.annotations = {"molecule_type": "DNA", "date": today_date}
+            contig.id = Path(self.contig_file).stem
+
+    def orf_calling(self):
+        # Don't call ORFs, just copy it from the input gbk file.
+        if self.merge_gbk:
+            return cds_calling_from_genbank(self.tmp_input_gbk_file)
+
+        # Use prodigal for ORF calling
+        if self.use_prodigal:
+            return tools.run_prodigal(self.tmp_input_fna_file)
+
+        # Use phanotate for ORF calling
+        return tools.run_phanotate(self.tmp_input_fna_file)
+
+    def load_features(self):
+        for contig_label, orf_list in self.orf_map.items():
+            contig = self.genome[contig_label]
+            for orf in orf_list:
+                idx, start, end, strand = orf.split("_")
+                feature = SeqFeature(
+                    FeatureLocation(int(start) - 1, int(end)),
+                    strand=1 if strand == "+" else -1,
+                    type="CDS",
+                    qualifiers={},
+                    id=idx[1:],
+                )
+                contig.features.append(feature)
+
+    def prepare_query_file(self):
+        with open(self.tmp_query_faa_file, "a") as fh:
+            for contig in self.genome.values():
+                for feature in contig.features:
+                    fh.write(f">{feature.id}\n")
+                    fh.write(self.cleanup_sequence(feature, contig) + "\n")
+
+
     def enrich_features(self, qualifiers):
         for contig in self.genome.values():
             for feature in contig.features:
@@ -97,33 +125,6 @@ class Pipeline(object):
                     "protein_id": blast_result.get("sseqid", "N/A"),
                 }
                 feature.qualifiers = quals
-
-    def load_features(self):
-        for contig_label, orf_list in self.orf_map.items():
-            contig = self.genome[contig_label]
-            for orf in orf_list:
-                idx, start, end, strand = orf.split("_")
-                feature = SeqFeature(
-                    FeatureLocation(int(start) - 1, int(end)),
-                    strand=1 if strand == "+" else -1,
-                    type="CDS",
-                    qualifiers={},
-                    id=idx[1:],
-                )
-                contig.features.append(feature)
-
-    def annotate_contigs(self):
-        today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
-        for contig in self.genome.values():
-            contig.annotations = {"molecule_type": "DNA", "date": today_date}
-            contig.id = Path(self.contig_file).stem
-
-    def prepare_query_file(self):
-        with open(self.tmp_query_faa_file, "a") as fh:
-            for contig in self.genome.values():
-                for feature in contig.features:
-                    fh.write(f">{feature.id}\n")
-                    fh.write(self.cleanup_sequence(feature, contig) + "\n")
 
     @staticmethod
     def cleanup_sequence(feature, contig):
