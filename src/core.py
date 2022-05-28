@@ -14,7 +14,7 @@ def cds_calling_from_genbank(input_handle):
             if feature.type == "CDS":
                 strand = "+" if feature.location.strand == 1 else "-"
                 orf = f">{idx}_{feature.location.start+1}_{feature.location.end}_{strand}"
-                features[contig.name].append(orf)
+                features[contig.id].append(orf)
                 idx += 1
     return features
 
