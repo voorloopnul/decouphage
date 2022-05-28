@@ -104,7 +104,6 @@ class Pipeline(object):
                     fh.write(f">{feature.id}\n")
                     fh.write(self.cleanup_sequence(feature, contig) + "\n")
 
-
     def enrich_features(self, qualifiers):
         for contig in self.genome.values():
             for feature in contig.features:
