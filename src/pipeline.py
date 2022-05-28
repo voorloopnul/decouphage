@@ -1,7 +1,9 @@
 import datetime
+import logging
 import os
 import re
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 from Bio import SeqIO
@@ -11,6 +13,7 @@ from src.annotate import Annotate
 from src.core import cds_calling_from_genbank, probe_filetype, get_database_default_path
 from src.output import write_gbk
 
+logger = logging.getLogger(__name__)
 
 class Pipeline(object):
     def __init__(self, database: str, input_file: str, prodigal: bool, threads: int, output_file: str, tmp_dir: str,
@@ -52,6 +55,10 @@ class Pipeline(object):
 
     def load_genome_from_file(self):
         input_type = probe_filetype(self.contig_file)
+
+        if input_type == 'FASTA' and self.merge_gbk:
+            logger.error("Can't disable ORF calling if input is a FASTA file.")
+            sys.exit(1)
 
         if input_type == 'FASTA':
             shutil.copyfile(self.contig_file, self.tmp_input_fna_file)
