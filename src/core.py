@@ -1,6 +1,5 @@
 from collections import defaultdict
 from pathlib import Path
-
 from Bio import SeqIO
 
 

@@ -15,6 +15,7 @@ from src.output import write_gbk
 
 logger = logging.getLogger(__name__)
 
+
 class Pipeline(object):
     def __init__(self, database: str, input_file: str, prodigal: bool, threads: int, output_file: str, tmp_dir: str,
                  merge_gbk: bool):
