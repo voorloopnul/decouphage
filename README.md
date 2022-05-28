@@ -7,7 +7,7 @@ everything else is optional.
  
 ### Highlights
 
- - Can be easily installed in Linux or Mac computers. Only requirement is  ncbi-blast+.
+ - Can be easily installed in Linux or Mac computers. Only requirement is ncbi-blast+.
  - Can be extended with prodigal
  - Decouphage is fast, using a Macbook most phage genomes can be annotated in less than 5 minutes.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
@@ -42,7 +42,13 @@ Decouphage database is derived from NCBI NR.
 
 ### Downloading database
 
-    decouphage --setup_db 
+Download database to default location in $HOME/.decouphage/db/
+
+    decouphage --download_db
+
+Download database to a different path:
+
+    decouphage --download_db /some/location/to/store/database 
 
 ### Making custom databases
 
