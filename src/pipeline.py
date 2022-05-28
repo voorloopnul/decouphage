@@ -102,7 +102,7 @@ class Pipeline(object):
             for contig in self.genome.values():
                 for feature in contig.features:
                     fh.write(f">{feature.id}\n")
-                    fh.write(self.cleanup_sequence(feature, contig) + "\n")
+                    fh.write(self.clean_sequence(feature, contig) + "\n")
 
     def enrich_features(self, qualifiers):
         for contig in self.genome.values():
@@ -120,13 +120,13 @@ class Pipeline(object):
                     "gene": feature.id,
                     "product": product,
                     "locus_tag": tag,
-                    "translation": self.cleanup_sequence(feature, contig),
+                    "translation": self.clean_sequence(feature, contig),
                     "protein_id": blast_result.get("sseqid", "N/A"),
                 }
                 feature.qualifiers = quals
 
     @staticmethod
-    def cleanup_sequence(feature, contig):
+    def clean_sequence(feature, contig):
         sequence = str(feature.extract(contig.seq).translate(table=11))
         if sequence.endswith("*"):
             sequence = sequence[:-1]
