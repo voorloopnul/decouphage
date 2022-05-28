@@ -28,8 +28,8 @@ class Pipeline(object):
         tmp_dir_handler = tempfile.TemporaryDirectory()
         self.tmp_dir = tmp_dir if tmp_dir else tmp_dir_handler.name
 
-        self.tmp_query_gbk_file = os.path.join(self.tmp_dir, 'input.gbk')  # genbank
-        self.tmp_query_fna_file = os.path.join(self.tmp_dir, 'input.fna')  # contigs
+        self.tmp_input_gbk_file = os.path.join(self.tmp_dir, 'input.gbk')  # genbank
+        self.tmp_input_fna_file = os.path.join(self.tmp_dir, 'input.fna')  # contigs
         self.tmp_query_faa_file = os.path.join(self.tmp_dir, 'query.faa')  # ORFs
         self.tmp_blast_tsv_file = os.path.join(self.tmp_dir, 'blast.tsv')  # Blast result
 
@@ -40,14 +40,14 @@ class Pipeline(object):
     def orf_calling(self):
         # Don't call ORFs, just copy it from the input gbk file.
         if self.merge_gbk:
-            return cds_calling_from_genbank(self.tmp_query_gbk_file)
+            return cds_calling_from_genbank(self.tmp_input_gbk_file)
 
         # Use prodigal for ORF calling
         if self.use_prodigal:
-            return tools.run_prodigal(self.tmp_query_fna_file)
+            return tools.run_prodigal(self.tmp_input_fna_file)
 
         # Use phanotate for ORF calling
-        return tools.run_phanotate(self.tmp_query_fna_file)
+        return tools.run_phanotate(self.tmp_input_fna_file)
 
     def run(self):
         self.load_genome_from_file()
@@ -61,6 +61,21 @@ class Pipeline(object):
         self.enrich_features(qualifiers)
 
         write_gbk(self.genome.values(), self.output_file)
+
+    def load_genome_from_file(self):
+        input_type = probe_filetype(self.contig_file)
+
+        if input_type == 'FASTA':
+            shutil.copyfile(self.contig_file, self.tmp_input_fna_file)
+        else:
+            with open(self.contig_file, "r") as input_handle:
+                sequences = SeqIO.parse(input_handle, "genbank")
+                with open(self.tmp_input_fna_file, "w") as output_handle:
+                    SeqIO.write(sequences, output_handle, "fasta")
+            shutil.copyfile(self.contig_file, self.tmp_input_gbk_file)
+
+        self.contig_file = self.tmp_input_fna_file
+        self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
     def enrich_features(self, qualifiers):
         for contig in self.genome.values():
@@ -96,21 +111,6 @@ class Pipeline(object):
                     id=idx[1:],
                 )
                 contig.features.append(feature)
-
-    def load_genome_from_file(self):
-        input_type = probe_filetype(self.contig_file)
-
-        if input_type == 'FASTA':
-            shutil.copyfile(self.contig_file, self.tmp_query_fna_file)
-        else:
-            with open(self.contig_file, "r") as input_handle:
-                sequences = SeqIO.parse(input_handle, "genbank")
-                with open(self.tmp_query_fna_file, "w") as output_handle:
-                    SeqIO.write(sequences, output_handle, "fasta")
-            shutil.copyfile(self.contig_file, self.tmp_query_gbk_file)
-
-        self.contig_file = self.tmp_query_fna_file
-        self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
     def annotate_contigs(self):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
