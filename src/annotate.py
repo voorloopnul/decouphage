@@ -76,7 +76,3 @@ class Annotate(object):
                 logger.info(f"No good candidate found for CDS #{gene}")
 
         return qualifiers
-
-
-if __name__ == "__main__":
-    Annotate().run()

@@ -3,30 +3,13 @@ import os
 import re
 import shutil
 import tempfile
-from collections import defaultdict
 from pathlib import Path
-
 from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature, FeatureLocation
-
 from src import tools
 from src.annotate import Annotate
+from src.core import cds_calling_from_genbank, probe_filetype
 from src.output import write_gbk
-
-
-def cds_calling_from_genbank(input_handle):
-    features = defaultdict(list)
-
-    contigs = SeqIO.parse(input_handle, "genbank")
-    idx = 1
-    for contig in contigs:
-        for feature in contig.features:
-            if feature.type == "CDS":
-                strand = "+" if feature.location.strand == 1 else "-"
-                orf = f">{idx}_{feature.location.start+1}_{feature.location.end}_{strand}"
-                features[contig.name].append(orf)
-                idx += 1
-    return features
 
 
 class Pipeline(object):
@@ -68,6 +51,7 @@ class Pipeline(object):
 
     def run(self):
         self.load_genome_from_file()
+        self.annotate_contigs()
         self.orf_map = self.orf_calling()
         self.load_features()
         self.prepare_query_file()
@@ -114,17 +98,22 @@ class Pipeline(object):
                 contig.features.append(feature)
 
     def load_genome_from_file(self):
-        today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
+        input_type = probe_filetype(self.contig_file)
 
-        with open(self.contig_file, "rU") as input_handle:
-            with open(self.tmp_query_fna_file, "w") as output_handle:
+        if input_type == 'FASTA':
+            shutil.copyfile(self.contig_file, self.tmp_query_fna_file)
+        else:
+            with open(self.contig_file, "r") as input_handle:
                 sequences = SeqIO.parse(input_handle, "genbank")
-                SeqIO.write(sequences, output_handle, "fasta")
-                shutil.copyfile(self.contig_file, self.tmp_query_gbk_file)
+                with open(self.tmp_query_fna_file, "w") as output_handle:
+                    SeqIO.write(sequences, output_handle, "fasta")
+            shutil.copyfile(self.contig_file, self.tmp_query_gbk_file)
 
         self.contig_file = self.tmp_query_fna_file
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
 
+    def annotate_contigs(self):
+        today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
         for contig in self.genome.values():
             contig.annotations = {"molecule_type": "DNA", "date": today_date}
             contig.id = Path(self.contig_file).stem
