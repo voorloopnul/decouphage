@@ -7,8 +7,6 @@ logger = logging.getLogger(__name__)
 
 
 def run_blast(threads, query_file, blast_file, database="db/nr/nr.fa"):
-    logger.info("Blasting sequences...")
-
     blast_cmd = [
         "blastp",
         "-db", database,

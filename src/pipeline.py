@@ -14,6 +14,7 @@ from src.core import cds_calling_from_genbank, probe_filetype, get_database_defa
 from src.output import write_gbk
 
 logger = logging.getLogger(__name__)
+total_steps = 8
 
 
 class Pipeline(object):
@@ -47,16 +48,20 @@ class Pipeline(object):
         self.orf_map = self.orf_calling()
         self.load_features()
         self.prepare_query_file()
+
+        logger.info(f"[5/{total_steps}] Running blast against {self.database}")
         tools.run_blast(self.blast_threads, self.tmp_query_faa_file, self.tmp_blast_tsv_file, self.database)
 
+        logger.info(f"[6/{total_steps}] Selecting best hits")
         qualifiers = {record["qseqid"]: record for record in Annotate(self.tmp_blast_tsv_file).run()}
         self.enrich_features(qualifiers)
 
+        logger.info(f"[8/{total_steps}] Writing output.")
         write_gbk(self.genome.values(), self.output_file)
 
     def load_genome_from_file(self):
         input_type = probe_filetype(self.contig_file)
-        logger.info(f"Input type inferred as {input_type}")
+        logger.info(f"[1/{total_steps}] Input type inferred as {input_type}")
 
         if input_type == 'FASTA' and self.merge_gbk:
             logger.error("Can't disable ORF calling if input is a FASTA file.")
@@ -81,22 +86,23 @@ class Pipeline(object):
             contig.id = Path(self.contig_file).stem
 
     def orf_calling(self):
+        logger.info(f"[2/{total_steps}] Starting ORF calling")
         # Don't call ORFs, just copy it from the input gbk file.
         if self.merge_gbk:
-            logger.info(f"Decouphage will use CDS from Genbank file.")
+            logger.warning(f" - decouphage will skip this step and use CDS from Genbank file.")
             return cds_calling_from_genbank(self.tmp_input_gbk_file)
 
         # Use prodigal for ORF calling
         if self.use_prodigal:
-            logger.info(f"Starting ORF calling with Prodigal")
+            logger.info(f" - with Prodigal")
             return tools.run_prodigal(self.tmp_input_fna_file)
 
         # Use phanotate for ORF calling
-        logger.info(f"Starting ORF calling with Phanotate")
+        logger.info(f" - with Phanotate")
         return tools.run_phanotate(self.tmp_input_fna_file)
 
     def load_features(self):
-        logger.info(f"Loading features into biopython SeqFeature")
+        logger.info(f"[3/{total_steps}] Loading features into biopython SeqFeature")
         for contig_label, orf_list in self.orf_map.items():
             contig = self.genome[contig_label]
             for orf in orf_list:
@@ -111,7 +117,7 @@ class Pipeline(object):
                 contig.features.append(feature)
 
     def prepare_query_file(self):
-        logger.info(f"Preparing blast query file.")
+        logger.info(f"[4/{total_steps}] Preparing blast query file.")
         with open(self.tmp_query_faa_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
@@ -119,7 +125,7 @@ class Pipeline(object):
                     fh.write(self.clean_sequence(feature, contig) + "\n")
 
     def enrich_features(self, qualifiers):
-        logger.info(f"Enriching features with blast hits.")
+        logger.info(f"[7/{total_steps}] Enriching features with hits annotation.")
         for contig in self.genome.values():
             for feature in contig.features:
                 blast_result = qualifiers.get(int(feature.id), {})
