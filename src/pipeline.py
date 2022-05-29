@@ -56,6 +56,7 @@ class Pipeline(object):
 
     def load_genome_from_file(self):
         input_type = probe_filetype(self.contig_file)
+        logger.info(f"Input type inferred as {input_type}")
 
         if input_type == 'FASTA' and self.merge_gbk:
             logger.error("Can't disable ORF calling if input is a FASTA file.")
@@ -82,16 +83,20 @@ class Pipeline(object):
     def orf_calling(self):
         # Don't call ORFs, just copy it from the input gbk file.
         if self.merge_gbk:
+            logger.info(f"Decouphage will use CDS from Genbank file.")
             return cds_calling_from_genbank(self.tmp_input_gbk_file)
 
         # Use prodigal for ORF calling
         if self.use_prodigal:
+            logger.info(f"Starting ORF calling with Prodigal")
             return tools.run_prodigal(self.tmp_input_fna_file)
 
         # Use phanotate for ORF calling
+        logger.info(f"Starting ORF calling with Phanotate")
         return tools.run_phanotate(self.tmp_input_fna_file)
 
     def load_features(self):
+        logger.info(f"Loading features into biopython SeqFeature")
         for contig_label, orf_list in self.orf_map.items():
             contig = self.genome[contig_label]
             for orf in orf_list:
@@ -106,6 +111,7 @@ class Pipeline(object):
                 contig.features.append(feature)
 
     def prepare_query_file(self):
+        logger.info(f"Preparing blast query file.")
         with open(self.tmp_query_faa_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
@@ -113,6 +119,7 @@ class Pipeline(object):
                     fh.write(self.clean_sequence(feature, contig) + "\n")
 
     def enrich_features(self, qualifiers):
+        logger.info(f"Enriching features with blast hits.")
         for contig in self.genome.values():
             for feature in contig.features:
                 blast_result = qualifiers.get(int(feature.id), {})
