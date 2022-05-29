@@ -17,8 +17,8 @@ setuptools.setup(
       install_requires=[
             "biopython==1.79",
             "phanotate==1.5.0",
-            "pandas==1.3.2",
-            "click==8.0.1",
+            "pandas==1.4.2",
+            "click==8.1.3",
             "pytest==7.1.2"
       ]
 )
