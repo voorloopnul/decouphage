@@ -12,9 +12,8 @@ COPY requirements.txt /data/
 RUN pip install -r /data/requirements.txt
 
 COPY db/nr /data/db/nr
-COPY data/two_contigs.fasta /data/genome.fa
 COPY decouphage.py /data/
 COPY src /data/src
 
 WORKDIR data
-CMD python3 decouphage.py --db /data/db/nr/nr.fa /data/genome.fa
+ENTRYPOINT python3 decouphage.py
