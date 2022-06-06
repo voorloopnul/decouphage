@@ -11,7 +11,6 @@ RUN mkdir /data
 COPY requirements.txt /data/
 RUN pip install -r /data/requirements.txt
 
-COPY db/nr /data/db/nr
 COPY decouphage.py /data/
 COPY decouphage_db.py /data/
 COPY src /data/src
