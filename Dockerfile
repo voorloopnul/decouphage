@@ -13,7 +13,9 @@ RUN pip install -r /data/requirements.txt
 
 COPY db/nr /data/db/nr
 COPY decouphage.py /data/
+COPY decouphage_db.py /data/
 COPY src /data/src
 
 WORKDIR data
+RUN python decouphage_db.py download
 ENTRYPOINT python3 decouphage.py
