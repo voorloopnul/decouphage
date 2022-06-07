@@ -17,4 +17,5 @@ COPY src /data/src
 
 WORKDIR data
 RUN python decouphage_db.py download
-ENTRYPOINT python3 decouphage.py
+ENTRYPOINT ["python3", "decouphage.py"]
+CMD ["--help"]
