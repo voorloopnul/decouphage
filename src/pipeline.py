@@ -32,6 +32,8 @@ class Pipeline(object):
 
         tmp_dir_handler = tempfile.TemporaryDirectory()
         self.tmp_dir = tmp_dir if tmp_dir else tmp_dir_handler.name
+        if tmp_dir:
+            os.mkdir(tmp_dir)
 
         self.tmp_input_gbk_file = os.path.join(self.tmp_dir, 'input.gbk')  # genbank
         self.tmp_input_fna_file = os.path.join(self.tmp_dir, 'input.fna')  # contigs
