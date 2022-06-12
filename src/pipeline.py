@@ -5,6 +5,7 @@ import re
 import shutil
 import sys
 import tempfile
+from itertools import count
 from pathlib import Path
 from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature, FeatureLocation
@@ -84,8 +85,9 @@ class Pipeline(object):
     def annotate_contigs(self):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
         for contig in self.genome.values():
-            contig.annotations = {"molecule_type": "DNA", "date": today_date}
-            contig.id = Path(self.contig_file).stem
+            contig.annotations = {"molecule_type": "DNA", "date": today_date, "accessions": ""}
+            # Leave .id empty to mimic prokka output.
+            contig.id = ""
 
     def orf_calling(self):
         logger.info(f"[2/{total_steps}] Starting ORF calling")
