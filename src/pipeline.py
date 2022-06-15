@@ -64,6 +64,10 @@ class Pipeline(object):
 
     def load_genome_from_file(self):
         input_type = probe_filetype(self.contig_file)
+        if not input_type:
+            logger.error("Failed to detect input type")
+            sys.exit(1)
+
         logger.info(f"[1/{total_steps}] Input type inferred as {input_type}")
 
         if input_type == 'FASTA' and self.merge_gbk:

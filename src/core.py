@@ -24,8 +24,10 @@ def probe_filetype(input_file):
 
     if data.startswith(b">"):
         return "FASTA"
-    else:
+    elif data.lower().startswith(b"l"):
         return "GENBANK"
+    else:
+        return None
 
 
 def get_database_default_path():
