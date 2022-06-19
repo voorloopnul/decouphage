@@ -18,17 +18,40 @@ def cds_calling_from_genbank(input_handle):
     return features
 
 
-def probe_filetype(input_file):
-    with open(input_file, 'rb') as fh:
-        data = fh.read(2)
-
-    if data.startswith(b">"):
-        return "FASTA"
-    elif data.lower().startswith(b"l"):
-        return "GENBANK"
-    else:
-        return None
-
-
 def get_database_default_path():
     return Path.home() / Path(".decouphage/db/nr/nr.fa")
+
+
+def is_fasta(file_path):
+    has_sequence = False
+
+    fasta = SeqIO.parse(file_path, "fasta")
+    for i in fasta:
+        if len(i.seq) > 0:
+            has_sequence = True
+            return has_sequence
+    return has_sequence
+
+
+def is_genbank(file_path):
+    has_sequence = False
+    fasta = SeqIO.parse(file_path, "genbank")
+    for i in fasta:
+        if len(i.seq) > 0:
+            has_sequence = True
+            return has_sequence
+    return has_sequence
+
+
+def validate_input(input_file):
+    try:
+        if is_fasta(input_file):
+            return "FASTA"
+    except UnicodeDecodeError:
+        return None
+
+    try:
+        if is_genbank(input_file):
+            return "GENBANK"
+    except UnicodeDecodeError:
+        return None

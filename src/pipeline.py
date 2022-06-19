@@ -11,7 +11,7 @@ from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from src import tools
 from src.annotate import Annotate
-from src.core import cds_calling_from_genbank, probe_filetype, get_database_default_path
+from src.core import cds_calling_from_genbank, probe_filetype, get_database_default_path, validate_input
 from src.output import write_gbk
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class Pipeline(object):
         write_gbk(self.genome.values(), self.output_file)
 
     def load_genome_from_file(self):
-        input_type = probe_filetype(self.contig_file)
+        input_type = validate_input(self.contig_file)
         if not input_type:
             logger.error("Failed to detect input type")
             sys.exit(1)
@@ -76,12 +76,15 @@ class Pipeline(object):
 
         if input_type == 'FASTA':
             shutil.copyfile(self.contig_file, self.tmp_input_fna_file)
-        else:
+        elif input_type == 'GENBANK':
             with open(self.contig_file, "r") as input_handle:
                 sequences = SeqIO.parse(input_handle, "genbank")
                 with open(self.tmp_input_fna_file, "w") as output_handle:
                     SeqIO.write(sequences, output_handle, "fasta")
             shutil.copyfile(self.contig_file, self.tmp_input_gbk_file)
+        else:
+            logger.error("The code should never have hit this else!")
+            sys.exit(1)
 
         self.contig_file = self.tmp_input_fna_file
         self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))

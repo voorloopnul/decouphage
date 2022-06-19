@@ -1,4 +1,4 @@
-from src.core import probe_filetype, get_database_default_path, cds_calling_from_genbank
+from src.core import get_database_default_path, cds_calling_from_genbank, validate_input
 
 
 def test_path_for_default_database():
@@ -6,8 +6,8 @@ def test_path_for_default_database():
 
 
 def test_can_identify_file_type():
-    assert "GENBANK" == probe_filetype("data/AP019417.1.gb")
-    assert "FASTA" == probe_filetype("data/two_contigs.fasta")
+    assert "GENBANK" == validate_input("data/AP019417.1.gb")
+    assert "FASTA" == validate_input("data/two_contigs.fasta")
 
 
 def test_no_orf_calling():
