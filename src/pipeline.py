@@ -85,7 +85,12 @@ class Pipeline(object):
             sys.exit(1)
 
         self.contig_file = self.tmp_input_fna_file
-        self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
+        try:
+            self.genome = SeqIO.to_dict(SeqIO.parse(self.contig_file, "fasta"))
+        except ValueError as e:
+            duplicated_contig = re.findall(r"'(.*?)'", str(e), re.DOTALL)[0]
+            logger.error(f"A duplicated record was found: {duplicated_contig}")
+            sys.exit(1)
 
     def annotate_contigs(self):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
