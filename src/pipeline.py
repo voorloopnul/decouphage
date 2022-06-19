@@ -5,13 +5,11 @@ import re
 import shutil
 import sys
 import tempfile
-from itertools import count
-from pathlib import Path
 from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from src import tools
 from src.annotate import Annotate
-from src.core import cds_calling_from_genbank, probe_filetype, get_database_default_path, validate_input
+from src.core import cds_calling_from_genbank, get_database_default_path, validate_input
 from src.output import write_gbk
 
 logger = logging.getLogger(__name__)
