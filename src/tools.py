@@ -2,14 +2,11 @@ from collections import defaultdict
 import logging
 import os
 
-logging.basicConfig(level=logging.INFO)
 BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 logger = logging.getLogger(__name__)
 
 
 def run_blast(threads, query_file, blast_file, database="db/nr/nr.fa"):
-    logger.info("Blasting sequences...")
-
     blast_cmd = [
         "blastp",
         "-db", database,
@@ -17,9 +14,10 @@ def run_blast(threads, query_file, blast_file, database="db/nr/nr.fa"):
         "-evalue", "1e-5",
         "-outfmt", f"'6 {BLAST_FMT}'",
         "-num_threads", f"{threads}",
+        "-task", "blastp-fast",
         "-out", blast_file
     ]
-    print(blast_cmd)
+    logger.debug(blast_cmd)
     os.system(" ".join(blast_cmd))
 
 

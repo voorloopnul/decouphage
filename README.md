@@ -60,12 +60,15 @@ Make blast database
 
 ## Options
 
-    Usage: decouphage.py [OPTIONS] INPUT_FILE
-
+    Usage: decouphage [OPTIONS] INPUT_FILE
+    
     Options:
       --prodigal             Use prodigal for orf calling instead of phanotate.
+      -d, --db PATH
       -o, --output TEXT
       -t, --threads INTEGER  [default: 1]
+      --tmp_dir TEXT         Folder for intermediate files.
+      --no-orf-calling       Annotate CDS from genbank file.
       --help                 Show this message and exit.
 
 

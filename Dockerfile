@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 ENV TZ=Europe/Copenhagen
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -11,10 +11,10 @@ RUN mkdir /data
 COPY requirements.txt /data/
 RUN pip install -r /data/requirements.txt
 
-COPY db/* /data/db/
-COPY data/sequence.fasta /data/genome.fa
 COPY decouphage.py /data/
+COPY decouphage_db.py /data/
 COPY src /data/src
 
 WORKDIR data
-CMD python3 decouphage.py /data/genome.fa
+RUN python decouphage_db.py download
+CMD ["python", "decouphage.py"]
