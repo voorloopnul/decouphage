@@ -144,7 +144,7 @@ class Pipeline(object):
             for feature in contig.features:
                 blast_result = qualifiers.get(int(feature.id), {})
 
-                product = blast_result.get("stitle", "Unknown")
+                product = blast_result.get("stitle", "hypothetical protein")
                 pattern = r"\[.*?\]"
                 product = re.sub(pattern, "", product).rstrip()
                 product = product.replace("TPA: MAG TPA: ", "")
