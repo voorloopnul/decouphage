@@ -14,6 +14,7 @@ def run_blast(threads, query_file, blast_file, database="db/nr/nr.fa"):
         "-evalue", "1e-5",
         "-outfmt", f"'6 {BLAST_FMT}'",
         "-num_threads", f"{threads}",
+        "-task", "blastp-fast",
         "-out", blast_file
     ]
     logger.debug(blast_cmd)

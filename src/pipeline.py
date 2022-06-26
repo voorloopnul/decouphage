@@ -148,6 +148,8 @@ class Pipeline(object):
                 pattern = r"\[.*?\]"
                 product = re.sub(pattern, "", product).rstrip()
                 product = product.replace("TPA: MAG TPA: ", "")
+                product = product.replace("TPA_asm: MAG TPA_asm: ", "")
+                product = product.replace("MULTISPECIES: ", "")
 
                 tag = "PREF_{l:04d}".format(l=int(feature.id))
 
