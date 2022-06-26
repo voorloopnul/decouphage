@@ -1,7 +1,7 @@
 ![Tux, the Linux mascot](https://raw.githubusercontent.com/voorloopnul/voorloopnul/357a7ead62584e352c61b008790fe38d4aff5664/logos/decouphage.png)
 
 
-# Decouphage: the art of decorating a Phage genome by gluing ~~colorful~~ meaningful feature cutouts into it.
+# Decouphage: the art of decorating a Phage genome by gluing ~~colorful~~ meaningful ~~paper~~ feature cutouts into it.
 
 ## Description
 
