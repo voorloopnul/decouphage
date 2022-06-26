@@ -145,8 +145,6 @@ class Pipeline(object):
                 blast_result = qualifiers.get(int(feature.id), {})
 
                 product = blast_result.get("stitle", "hypothetical protein")
-                pattern = r"\[.*?\]"
-                product = re.sub(pattern, "", product).rstrip()
                 product = product.replace("TPA: MAG TPA: ", "")
                 product = product.replace("TPA_asm: MAG TPA_asm: ", "")
                 product = product.replace("MULTISPECIES: ", "")

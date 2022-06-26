@@ -36,7 +36,8 @@ class Annotate(object):
 
     @staticmethod
     def remove_species(stitle):
-        return re.sub("[\(\[].*?[\)\]]", "", stitle)
+        pattern = r"\[.*?\]"
+        return re.sub(pattern, "", stitle).rstrip(" ")
 
     def first_pass(self, _df, exclude_putative=True):
         if exclude_putative:
