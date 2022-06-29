@@ -1,7 +1,7 @@
 ![Tux, the Linux mascot](https://raw.githubusercontent.com/voorloopnul/voorloopnul/357a7ead62584e352c61b008790fe38d4aff5664/logos/decouphage.png)
 
 
-# Decouphage: the art of decorating a Phage genome by gluing ~~colorful~~ meaningful ~~paper~~ feature cutouts into it.
+# Decouphage: the art of decorating a Phage genome by gluing ~~colorful~~ meaningful ~~paper~~ features into it.
 
 ## Description
 
@@ -11,8 +11,8 @@ everything else is optional.
 ### Highlights
 
  - Can be easily installed in Linux or Mac computers. Only requirement is ncbi-blast+.
- - Can be extended with prodigal
- - Decouphage is fast, using a Macbook most phage genomes can be annotated in less than 5 minutes.
+ - Can be extended with prodigal, but as default it uses phanotate for ORF calling. 
+ - Decouphage is fast, using a Macbook most phage genomes can be annotated in less than a minute.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
  
 ## Installation
@@ -27,7 +27,7 @@ Install decouphage:
 
 Install ncbi-blast+
     
-    apt install ncbi-blast+ prodigal
+    apt install ncbi-blast+
 
 Optional: Install dependencies:
 
@@ -41,7 +41,7 @@ Run with docker (Already includes dependencies and databases):
 
 ## Databases
 
-Decouphage database is derived from NCBI NR.
+Decouphage database is derived from NCBI NR database clustered at 90% identity and 90% sequence length.
 
 ### Downloading database
 
