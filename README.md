@@ -18,33 +18,32 @@ everything else is optional.
  
 ## Why and how should I use decouphage?
 
-1. ### I want to discover and annotate a lot of ORFs:
-    
+### I want to discover and annotate a lot of ORFs:
+ 
     decouphage genome.fasta -o genome.gb
 
-2. ### I want to use prodigal to find my genes:
+### I want to use prodigal to find my genes:
 
     decouphage genome.fasta -o genome.gb --prodigal
 
-3. ### I don't want to call any CDS, I already have it in a genbank and whant to use those:
+### I have a genbank with poor annotation and want more:
 
-    > In this mode decouphage will not call any orf, will just generate annotation 
+In this mode decouphage will reuse the genbank ORFs and just run the annotation procedure.
 
     decouphage genome.gbk -o genome.gb --no-orf-calling
 
-5. ### I have a genbak annotated by other tool and want to fill the blanks!
-    
-    > In this mode decouphage will not call any orf, it will also preserve the original product and annotate only the
-   > ones `Hypothetical Protein` and `Phage protein`
+### I have a genbak annotated by other tool and want to fill the blanks:
 
+In this mode decouphage will reuse the genbank ORFs and also the annotations, replacing only products that 
+match `hypotethical protein`, `phage protein` and `putative protein`
 
     decouphage genome.gbk -o genome.gb --second-pass
 
+### I want to manually curate decouphage annotation:
 
-Doens't matter what annotation tool you choose to use, if you are manually investigating a genome you are going to try 
-and blast all those `Hypotethical Protein` or `Phage protein` that are missing in your annotation.
+In this mode decouphage will also upload the results to decouphage web and give you a link to update the annotations.    
 
-
+    decouphage genome.fasta -o genome.gb --curate
 
 
 3. ###
