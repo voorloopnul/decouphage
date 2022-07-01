@@ -11,10 +11,44 @@ everything else is optional.
 ### Highlights
 
  - Can be easily installed in Linux or Mac computers. Only requirement is ncbi-blast+.
+ - Offer a second-pass option on top of existing genbank files.
  - Can be extended with prodigal, but as default it uses phanotate for ORF calling. 
  - Decouphage is fast, using a Macbook most phage genomes can be annotated in less than a minute.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
  
+## Why and how should I use decouphage?
+
+1. ### I want to discover and annotate a lot of ORFs:
+    
+    decouphage genome.fasta -o genome.gb
+
+2. ### I want to use prodigal to find my genes:
+
+    decouphage genome.fasta -o genome.gb --prodigal
+
+3. ### I don't want to call any CDS, I already have it in a genbank and whant to use those:
+
+    > In this mode decouphage will not call any orf, will just generate annotation 
+
+    decouphage genome.gbk -o genome.gb --no-orf-calling
+
+5. ### I have a genbak annotated by other tool and want to fill the blanks!
+    
+    > In this mode decouphage will not call any orf, it will also preserve the original product and annotate only the
+   > ones `Hypothetical Protein` and `Phage protein`
+
+
+    decouphage genome.gbk -o genome.gb --second-pass
+
+
+Doens't matter what annotation tool you choose to use, if you are manually investigating a genome you are going to try 
+and blast all those `Hypotethical Protein` or `Phage protein` that are missing in your annotation.
+
+
+
+
+3. ###
+
 ## Installation
 
 You have multiple options to install and run decouphage:
