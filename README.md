@@ -16,7 +16,7 @@ everything else is optional.
  - Decouphage is fast, using a Macbook most phage genomes can be annotated in less than a minute.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
  
-## Why and how should I use decouphage?
+## How can I use decouphage?
 
 ### I want to discover and annotate a lot of ORFs:
  
@@ -45,8 +45,6 @@ In this mode decouphage will also upload the results to decouphage web and give 
 
     decouphage genome.fasta -o genome.gb --curate
 
-
-3. ###
 
 ## Installation
 
