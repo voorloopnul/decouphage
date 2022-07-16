@@ -128,9 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .idea
-data/
 db/
 tmp/
 tools/
 output.gbk
+sandbox
 
