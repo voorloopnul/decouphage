@@ -3,7 +3,7 @@ name: CI
 on:
   workflow_dispatch:
     branches: [ dev ]
-  pull_request:
+  push:
     branches: [ main ]
 
 jobs:
