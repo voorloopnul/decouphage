@@ -47,8 +47,7 @@ def get_default_database_path(config_path) -> Path:
 
 @click.command()
 @click.argument('command')
-def run_download(command, output):
-    logger.info(json.dumps(locals(), indent=4, sort_keys=True))
+def run_download(command):
 
     if command == "download":
         default_config_path = get_default_config_path()
