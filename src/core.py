@@ -19,7 +19,7 @@ def cds_calling_from_genbank(input_handle):
 
 
 def get_database_default_path():
-    return Path.home() / Path(".decouphage/db/nr/nr.fa")
+    return Path.home() / Path(".decouphage/db/ncbi_phages/ncbi_phages.fa")
 
 
 def is_fasta(file_path):

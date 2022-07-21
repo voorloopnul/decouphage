@@ -46,7 +46,6 @@ def get_default_database_path(config_path) -> Path:
 
 
 @click.command()
-@click.option('-o', '--output', 'output', default='output.gbk')
 @click.argument('command')
 def run_download(command, output):
     logger.info(json.dumps(locals(), indent=4, sort_keys=True))
@@ -54,9 +53,9 @@ def run_download(command, output):
     if command == "download":
         default_config_path = get_default_config_path()
         default_database_path = get_default_database_path(default_config_path)
-        download_file_path = default_database_path / Path("nr.tar.gz")
+        download_file_path = default_database_path / Path("ncbi_phages.tar.gz")
         logger.info("[1/2] Downloading database...")
-        download("https://labs.voorloop.com/archive/decouphage/nr_20220514.tar.gz", download_file_path)
+        download("https://labs.voorloop.com/archive/decouphage/ncbi_phages_latest.tar.gz", download_file_path)
 
         logger.info("[2/2] Extracting database...")
         with tarfile.open(download_file_path) as tarball:

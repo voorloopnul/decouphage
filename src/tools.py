@@ -1,12 +1,17 @@
 from collections import defaultdict
 import logging
 import os
+import sys
 
 BLAST_FMT = "qseqid sseqid pident length evalue bitscore slen stitle qlen"
 logger = logging.getLogger(__name__)
 
 
-def run_blast(threads, query_file, blast_file, database="db/nr/nr.fa"):
+def run_blast(threads, query_file, blast_file, database):
+    if not os.path.exists(database):
+        logging.error("Default database not found.")
+        sys.exit(1)
+
     blast_cmd = [
         "blastp",
         "-db", database,
