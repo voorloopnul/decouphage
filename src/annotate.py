@@ -1,4 +1,6 @@
 import re
+
+import numpy as np
 import pandas as pd
 import logging
 
@@ -46,6 +48,11 @@ class Annotate(object):
             bad_words = []
 
         for index, row in _df.iterrows():
+            if row["stitle"] is np.NAN:
+                # in case some database entry don't contain a description/product, we skip it.
+                logger.warning(f"Missing subject title for blast database entry: {row['sseqid']}")
+                continue
+
             if not any(word in row["stitle"] for word in bad_words):
                 blast_result = row.to_dict()
                 blast_result["stitle"] = self.remove_species(blast_result["stitle"])
