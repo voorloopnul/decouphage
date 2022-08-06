@@ -149,7 +149,7 @@ class Pipeline(object):
                 tag = "PREF_{l:04d}".format(l=int(feature.id))
 
                 quals = {
-                    "gene": feature.id,
+                    "feature": feature.id,
                     "product": product,
                     "locus_tag": tag,
                     "translation": self.clean_sequence(feature, contig),
