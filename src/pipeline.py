@@ -145,9 +145,6 @@ class Pipeline(object):
                 blast_result = qualifiers.get(int(feature.id), {})
 
                 product = blast_result.get("stitle", "hypothetical protein")
-                product = product.replace("TPA: MAG TPA: ", "")
-                product = product.replace("TPA_asm: MAG TPA_asm: ", "")
-                product = product.replace("MULTISPECIES: ", "")
 
                 tag = "PREF_{l:04d}".format(l=int(feature.id))
 
