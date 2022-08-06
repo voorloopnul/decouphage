@@ -41,7 +41,7 @@ class Annotate(object):
         pattern = r"\[.*?\]"
         return re.sub(pattern, "", stitle).rstrip(" ")
 
-    def default_pass(self, _df, iter):
+    def default_pass(self, _df, step):
         for index, row in _df.iterrows():
             if row["stitle"] is np.NAN:
                 # in case some database entry don't contain a description/product, we skip it.
@@ -50,7 +50,7 @@ class Annotate(object):
 
             blast_result = row.to_dict()
             blast_result["stitle"] = self.remove_species(blast_result["stitle"])
-            logging.debug(f"{iter}: {blast_result}")
+            logging.debug(f"{step}: {blast_result}")
             return blast_result
         return None
 
