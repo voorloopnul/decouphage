@@ -11,9 +11,8 @@ COPY requirements.txt /data/
 RUN pip install -r /data/requirements.txt
 
 COPY decouphage.py /data/
-COPY decouphage_db.py /data/
 COPY src /data/src
 
 WORKDIR data
-RUN python decouphage_db.py download
+RUN python decouphage.py --download_db
 CMD ["python", "decouphage.py"]

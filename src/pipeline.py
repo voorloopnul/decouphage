@@ -18,10 +18,11 @@ total_steps = 8
 
 class Pipeline(object):
     def __init__(self, database: str, input_file: str, prodigal: bool, threads: int, output_file: str, tmp_dir: str,
-                 merge_gbk: bool):
+                 merge_gbk: bool, locus_tag: str):
 
         self.database = database if database else str(get_database_default_path())
         self.contig_file = input_file
+        self.locus_tag = locus_tag
 
         # Operational options
         self.use_prodigal = prodigal
@@ -50,7 +51,7 @@ class Pipeline(object):
         self.load_features()
         self.prepare_query_file()
 
-        logger.info(f"[5/{total_steps}] Running blast against {self.database}")
+        logger.info(f"[5/{total_steps}] Running blast with {self.database}")
         tools.run_blast(self.blast_threads, self.tmp_query_faa_file, self.tmp_blast_tsv_file, self.database)
 
         logger.info(f"[6/{total_steps}] Selecting best hits")
@@ -131,7 +132,7 @@ class Pipeline(object):
                 contig.features.append(feature)
 
     def prepare_query_file(self):
-        logger.info(f"[4/{total_steps}] Preparing blast query file.")
+        logger.info(f"[4/{total_steps}] Preparing blast query file")
         with open(self.tmp_query_faa_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
@@ -139,20 +140,17 @@ class Pipeline(object):
                     fh.write(self.clean_sequence(feature, contig) + "\n")
 
     def enrich_features(self, qualifiers):
-        logger.info(f"[7/{total_steps}] Enriching features with hits annotation.")
+        logger.info(f"[7/{total_steps}] Enriching features")
         for contig in self.genome.values():
             for feature in contig.features:
                 blast_result = qualifiers.get(int(feature.id), {})
 
                 product = blast_result.get("stitle", "hypothetical protein")
-                product = product.replace("TPA: MAG TPA: ", "")
-                product = product.replace("TPA_asm: MAG TPA_asm: ", "")
-                product = product.replace("MULTISPECIES: ", "")
 
-                tag = "PREF_{l:04d}".format(l=int(feature.id))
+                tag = f"{self.locus_tag}_{int(feature.id):04d}"
 
                 quals = {
-                    "gene": feature.id,
+                    "feature": feature.id,
                     "product": product,
                     "locus_tag": tag,
                     "translation": self.clean_sequence(feature, contig),
