@@ -6,7 +6,7 @@
 ### Relevant branches
 
  - [main branch](https://github.com/voorloopnul/decouphage/tree/main): stable version available in [pypi](https://pypi.org/project/decouphage/) and [dockerhub](https://hub.docker.com/r/voorloop/decouphage).
- - [dev branch](https://github.com/voorloopnul/decouphage/tree/main): development branch with most recent version of decouphage.
+ - [dev branch](https://github.com/voorloopnul/decouphage/tree/dev): development branch with most recent version of decouphage.
  
 
 ## Description
