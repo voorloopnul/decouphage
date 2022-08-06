@@ -32,8 +32,11 @@ everything else is optional.
       -d, --db PATH
       -o, --output TEXT
       -t, --threads INTEGER  [default: 1]
-      --tmp_dir TEXT         Folder for intermediate files.
-      --no-orf-calling       Annotate CDS from genbank file.
+      --tmpdir TEXT          Folder for intermediate files.
+      --no_orf_calling       Annotate CDS from genbank file.
+      --locus_tag TEXT       Locus tag prefix.
+      --download_db          Download default database.
+      -v, --verbose          More verbose logging for debugging purpose.
       --help                 Show this message and exit.
 
 
@@ -84,10 +87,6 @@ Decouphage database is derived from NCBI NR database clustered at 90% identity a
 Download database to default location in $HOME/.decouphage/db/
 
     decouphage --download_db
-
-Download database to a different path:
-
-    decouphage --download_db /some/location/to/store/database 
 
 ### Making custom databases
 
