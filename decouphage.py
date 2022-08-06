@@ -46,7 +46,7 @@ def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir, merge
 
 
 if __name__ == '__main__':
-    if sys.argv[1] == "--download_db":
+    if len(sys.argv) > 1 and sys.argv[1] == "--download_db":
         run_download()
     else:
         run_pipeline()
