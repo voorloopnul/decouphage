@@ -18,10 +18,11 @@ total_steps = 8
 
 class Pipeline(object):
     def __init__(self, database: str, input_file: str, prodigal: bool, threads: int, output_file: str, tmp_dir: str,
-                 merge_gbk: bool):
+                 merge_gbk: bool, locus_tag: str):
 
         self.database = database if database else str(get_database_default_path())
         self.contig_file = input_file
+        self.locus_tag = locus_tag
 
         # Operational options
         self.use_prodigal = prodigal
@@ -146,7 +147,7 @@ class Pipeline(object):
 
                 product = blast_result.get("stitle", "hypothetical protein")
 
-                tag = "PREF_{l:04d}".format(l=int(feature.id))
+                tag = f"{self.locus_tag}_{int(feature.id):04d}"
 
                 quals = {
                     "feature": feature.id,

@@ -15,10 +15,11 @@ logger = logging.getLogger(__name__)
 @click.option('-o', '--output', 'output', default='output.gbk')
 @click.option('-t', '--threads', default=1, show_default=True)
 @click.option('--tmp_dir', 'tmp_dir', help="Folder for intermediate files.")
-@click.option('--no-orf-calling', 'merge_gbk', is_flag=True, help="Annotate CDS from genbank file.")
+@click.option('--no_orf_calling', 'merge_gbk', is_flag=True, help="Annotate CDS from genbank file.")
+@click.option('--locus_tag', 'locus_tag', default='PHG_CDS', help="Prefix for CDS locus_tag")
 @click.option('-v', '--verbose', is_flag=True, help="More verbose logging for debugging purpose.")
 @click.argument('input_file', type=click.Path(exists=True))
-def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir, merge_gbk, verbose):
+def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir, merge_gbk, locus_tag, verbose):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
         logger.setLevel(logging.DEBUG)
@@ -29,7 +30,7 @@ def run_pipeline(prodigal, database, output, input_file, threads, tmp_dir, merge
     logger.debug(json.dumps(locals(), indent=4, sort_keys=True))
     start_time = time.monotonic()
 
-    Pipeline(database, input_file, prodigal, threads, output, tmp_dir, merge_gbk)
+    Pipeline(database, input_file, prodigal, threads, output, tmp_dir, merge_gbk, locus_tag)
     end_time = time.monotonic()
 
     total_time = timedelta(seconds=end_time - start_time)
