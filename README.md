@@ -1,7 +1,13 @@
-![Tux, the Linux mascot](https://raw.githubusercontent.com/voorloopnul/voorloopnul/357a7ead62584e352c61b008790fe38d4aff5664/logos/decouphage.png)
+![Decouphage logo](https://raw.githubusercontent.com/voorloopnul/voorloopnul/357a7ead62584e352c61b008790fe38d4aff5664/logos/decouphage.png)
 
 
-# Decouphage: the art of decorating a Phage genome by gluing meaningful features into it.
+# Decouphage: the art of decorating a Phage genome by gluing feature cutouts into it.
+
+### Relevant branches
+
+ - [main branch](https://github.com/voorloopnul/decouphage/tree/main): stable version available in [pypi](https://pypi.org/project/decouphage/) and [dockerhub](https://hub.docker.com/r/voorloop/decouphage).
+ - [dev branch](https://github.com/voorloopnul/decouphage/tree/main): development branch with most recent version of decouphage.
+ 
 
 ## Description
 
@@ -12,7 +18,7 @@ everything else is optional.
 
  - Can be easily installed in Linux or Mac computers. Only requirement is ncbi-blast+.
  - Can be extended with prodigal, but as default it uses phanotate for ORF calling. 
- - Decouphage is fast, using a Macbook most phage genomes can be annotated in less than a minute.
+ - Decouphage is fast, using a Macbook **most phage genomes can be annotated in less than a minute**.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
  
 ## How can I use decouphage?
