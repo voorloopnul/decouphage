@@ -1,4 +1,6 @@
 import re
+
+import numpy as np
 import pandas as pd
 import logging
 
@@ -39,36 +41,28 @@ class Annotate(object):
         pattern = r"\[.*?\]"
         return re.sub(pattern, "", stitle).rstrip(" ")
 
-    def first_pass(self, _df, exclude_putative=True):
-        if exclude_putative:
-            bad_words = ["hypothetical", "putative", "unknown"]
-        else:
-            bad_words = []
-
+    def default_pass(self, _df, step):
         for index, row in _df.iterrows():
-            if not any(word in row["stitle"] for word in bad_words):
-                blast_result = row.to_dict()
-                blast_result["stitle"] = self.remove_species(blast_result["stitle"])
-                logging.debug(f"1st: {blast_result}")
-                return blast_result
+            if row["stitle"] is np.NAN:
+                # in case some database entry don't contain a description/product, we skip it.
+                logger.warning(f"Missing subject title for blast database entry: {row['sseqid']}")
+                continue
+
+            blast_result = row.to_dict()
+            blast_result["stitle"] = self.remove_species(blast_result["stitle"])
+            logging.debug(f"{step}: {blast_result}")
+            return blast_result
         return None
 
     def run(self):
         qualifiers = []
         for gene in self.genes_list:
-            _df = self.get_df_for_spcific_gene(gene)
-            _df = self.get_df_for_genes_same_length_range(_df)
+            _df_all = self.get_df_for_spcific_gene(gene)
+            _df_same_length = self.get_df_for_genes_same_length_range(_df_all)
 
-            blast_result = self.first_pass(_df)
-
+            blast_result = self.default_pass(_df_same_length, "1st")
             if not blast_result:
-                blast_result = self.first_pass(_df, exclude_putative=False)
-
-            if not blast_result:
-                blast_result = self.first_pass(self.get_df_for_spcific_gene(gene))
-
-            if not blast_result:
-                blast_result = self.first_pass(self.get_df_for_spcific_gene(gene), exclude_putative=False)
+                blast_result = self.default_pass(_df_all, "2nd")
 
             if blast_result:
                 qualifiers.append(blast_result)
