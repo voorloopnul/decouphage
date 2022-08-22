@@ -43,11 +43,11 @@ everything else is optional.
 
 ## Methods and Validation
 
-## Methods
+### Methods
 
 To be written...
 
-## Disclaimer
+### Disclaimer
 
 While decouphage validation appears to outperform RAST when annotating phages, remember that RAST is - by far - a more 
 advanced tool with consolidated methods. The results shown here are more a reflection of the database used than the 
