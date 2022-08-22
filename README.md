@@ -16,7 +16,7 @@
     + [Highlights](#highlights)
   * [Methods and Validation](#methods-and-validation)
     + [Validation](#validation)
-  * [How can I use decouphage?](#how-can-i-use-decouphage-)
+  * [How can I use decouphage](#how-can-i-use-decouphage)
     + [Options](#options)
     + [I want to discover and annotate a lot of ORFs:](#i-want-to-discover-and-annotate-a-lot-of-orfs-)
     + [I want to use prodigal to find my genes:](#i-want-to-use-prodigal-to-find-my-genes-)
@@ -93,7 +93,7 @@ This table shows that Decouphage potentially assign 2x more proteins than RAST.
 
 
 
-## How can I use decouphage?
+## How can I use decouphage
 
 ### Options
 
