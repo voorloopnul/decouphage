@@ -18,9 +18,9 @@
     + [Validation](#validation)
   * [How can I use decouphage](#how-can-i-use-decouphage)
     + [Options](#options)
-    + [I want to discover and annotate a lot of ORFs:](#i-want-to-discover-and-annotate-a-lot-of-orfs-)
-    + [I want to use prodigal to find my genes:](#i-want-to-use-prodigal-to-find-my-genes-)
-    + [I have a genbank with poor annotation and want more:](#i-have-a-genbank-with-poor-annotation-and-want-more-)
+    + [I want to discover and annotate a lot of ORFs](#i-want-to-discover-and-annotate-a-lot-of-orfs)
+    + [I want to use prodigal to find my genes](#i-want-to-use-prodigal-to-find-my-genes)
+    + [I have a genbank with poor annotation and want more](#i-have-a-genbank-with-poor-annotation-and-want-more)
   * [Installation](#installation)
     + [Ubuntu](#ubuntu)
     + [Docker](#docker)
@@ -112,15 +112,15 @@ This table shows that Decouphage potentially assign 2x more proteins than RAST.
       --help                 Show this message and exit.
 
 
-### I want to discover and annotate a lot of ORFs:
+### I want to discover and annotate a lot of ORFs
  
     decouphage genome.fasta -o genome.gb
 
-### I want to use prodigal to find my genes:
+### I want to use prodigal to find my genes
 
     decouphage genome.fasta -o genome.gb --prodigal
 
-### I have a genbank with poor annotation and want more:
+### I have a genbank with poor annotation and want more
 
 In this mode decouphage will reuse the genbank ORFs and just run the annotation procedure.
 
