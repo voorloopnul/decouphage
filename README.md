@@ -44,7 +44,7 @@ everything else is optional.
 
 ## Methods and Validation
 
-### Methods
+### Annotation Workflow
 
 To be written...
 
