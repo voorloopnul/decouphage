@@ -3,37 +3,31 @@
 
 # Decouphage: the art of decorating a Phage genome by gluing feature cutouts into it.
 
-### Relevant branches
+As the name suggests decouphage is a tool designed to annotate phage genomes. It only external dependency is ncbi-blast+
+everything else is optional. 
+
+**Relevant branches**
 
  - [main branch](https://github.com/voorloopnul/decouphage/tree/main): stable version available in [pypi](https://pypi.org/project/decouphage/) and [dockerhub](https://hub.docker.com/r/voorloop/decouphage).
  - [dev branch](https://github.com/voorloopnul/decouphage/tree/dev): development branch with most recent version of decouphage.
-
+ 
 ## Table of contents
 
-- [Decouphage: the art of decorating a Phage genome by gluing feature cutouts into it.](#decouphage--the-art-of-decorating-a-phage-genome-by-gluing-feature-cutouts-into-it)
-    + [Relevant branches](#relevant-branches)
-  * [Description](#description)
-    + [Highlights](#highlights)
-  * [Methods and Validation](#methods-and-validation)
-    + [Validation](#validation)
-  * [How can I use decouphage](#how-can-i-use-decouphage)
-    + [Options](#options)
-    + [I want to discover and annotate a lot of ORFs](#i-want-to-discover-and-annotate-a-lot-of-orfs)
-    + [I want to use prodigal to find my genes](#i-want-to-use-prodigal-to-find-my-genes)
-    + [I have a genbank with poor annotation and want more](#i-have-a-genbank-with-poor-annotation-and-want-more)
-  * [Installation](#installation)
-    + [Ubuntu](#ubuntu)
-    + [Docker](#docker)
-  * [Databases](#databases)
-    + [Downloading database](#downloading-database)
-    + [Making custom databases](#making-custom-databases)
-
-## Description
-
-As the name suggests decouphage is a tool designed to annotate phage genomes. It only external dependency is ncbi-blast+
-everything else is optional. 
- 
-### Highlights
+  1. [Highlights](#highlights)
+  2. [Validation](#validation)
+  3. [How can I use decouphage](#how-can-i-use-decouphage)
+     - [Options](#options)
+     - [I want to discover and annotate a lot of ORFs](#i-want-to-discover-and-annotate-a-lot-of-orfs)
+     - [I want to use prodigal to find my genes](#i-want-to-use-prodigal-to-find-my-genes)
+     - [I have a genbank with poor annotation and want more](#i-have-a-genbank-with-poor-annotation-and-want-more)
+  4. [Installation](#installation)
+     - [Ubuntu](#ubuntu)
+     - [Docker](#docker)
+  5. [Databases](#databases)
+     - [Downloading database](#downloading-database)
+     - [Making custom databases](#making-custom-databases)
+    
+## Highlights
 
  - Can be easily installed in Linux or Mac computers. Only requirement is ncbi-blast+.
  - Can be extended with prodigal, but as default it uses phanotate for ORF calling. 
