@@ -42,13 +42,7 @@ everything else is optional.
  
 ![alt text](assets/decouphage_web.gif)
 
-## Methods and Validation
-
-### Annotation Workflow
-
-To be written...
-
-### Validation
+#Validation
 
 Decouphage validation was made in comparison to RAST(Rapid Annotation using Subsystem Technology), a tool that is often
 praised for its good Prokaryotic annotation capabilities.
