@@ -39,10 +39,11 @@ everything else is optional.
  - Can be extended with prodigal, but as default it uses phanotate for ORF calling. 
  - Decouphage is fast, using a Macbook **most phage genomes can be annotated in less than a minute**.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
- 
-![alt text](assets/decouphage_web.gif)
+ - Allow manual curation using the [web interface](https://labs.voorloop.com/decouphage/).
 
-#Validation
+![decouphage web interface](assets/decouphage_web.gif)
+
+# Validation
 
 Decouphage validation was made in comparison to RAST(Rapid Annotation using Subsystem Technology), a tool that is often
 praised for its good Prokaryotic annotation capabilities.
