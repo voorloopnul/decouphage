@@ -49,3 +49,4 @@
 | terminase |  139 |   92 | 94% |
 | transferase |  159 |   43 | 60% |
 | hypothetical protein | 3945 | 6302 | 53% |
+| phage protein |    0 | 1626 | 0% |

@@ -18,6 +18,7 @@ word_of_interest = [
     "terminase",
     "transferase",
     "hypothetical protein",
+    "phage protein",
 ]
 
 
@@ -61,15 +62,15 @@ def generate_markdown_table():
 def generate_figure_01():
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=word_of_interest[:-1],
-        y=decouphage_counts[:-1],
-        text=decouphage_counts[:-1],
+        x=word_of_interest[:-2],
+        y=decouphage_counts[:-2],
+        text=decouphage_counts[:-2],
         name='Decouphage',
     ))
     fig.add_trace(go.Bar(
-        x=word_of_interest[:-1],
-        y=rast_counts[:-1],
-        text=rast_counts[:-1],
+        x=word_of_interest[:-2],
+        y=rast_counts[:-2],
+        text=rast_counts[:-2],
         name='RAST',
     ))
 
