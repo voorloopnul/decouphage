@@ -21,6 +21,59 @@ everything else is optional.
  - Decouphage is fast, using a Macbook **most phage genomes can be annotated in less than a minute**.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
  
+
+## Methods and Validation
+
+### Validation
+
+Decouphage validation was made in comparison to RAST(Rapid Annotation using Subsystem Technology) that is often
+referenced as a good Prokaryotic annotation tool.
+
+Decouphage outperform RAST when calling most relevant product categories:
+
+![alt text](validation/decouphage_image_01.png?raw=true)
+
+The agreement between Decouphage and RAST is high, other than giving more annotations, most of the time decouphage 
+will agree with the products given by rast at rates up to 94%:
+
+| Enzyme | Agreement rate with RAST |
+| ------ | ------------------------- |
+| endonuclease |  94% |
+| exonuclease | 58% |
+| helicase | 70% |
+| hydrolase | 73% |
+| kinase |  86% |
+| ligase |  94% |
+| methyltransferase | 65% |
+| polymerase | 76% |
+| primase | 78% |
+| protease | 85% |
+| recombinase | 28% |
+| reductase | 90% |
+| synthase | 84% |
+| terminase | 94% |
+| transferase | 60% |
+
+A precise comparison of product-to-position is difficult given differences in spelling, typos, synonyms, and interchangeable 
+names, but the table above can give a good sense of the similarities.
+
+To corroborate the higher number of meaningful annotations that Decouphage gives, we also checked for "hypotheical proteins",
+and "phage protein" assignments that often don't carry any relevant information:
+
+
+| Product | Decouphage | Rast | Agreement rate with RAST |
+| ------- | ---------- | ---- | ------------------------ |
+| hypothetical protein | 3945 | 6302 | 53% |
+| phage protein |    0 | 1626 | N/A<sup>1</sup> |
+| Total products |    9692 | 9692 | N/A<sup>2</sup>  |
+
+1. Decouphage don't include products containing "phage protein" as they usually are a source of noise.
+2. Decouphage was executed on the genbank generated from RAST, and with ORF calling disabled to preserve CDS.
+
+This table shows that Decouphage potentially assign 2x more proteins than RAST.
+
+
+
 ## How can I use decouphage?
 
 ### Options
