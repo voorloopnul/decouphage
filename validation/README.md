@@ -22,3 +22,30 @@
 
 5. **Compare the results**
 
+
+    ./python compare.py
+
+
+## Example output
+
+![alt text](decouphage_image_01.png?raw=true)
+
+
+| Enzyme | Decouphage | Rast | Decouphage agreement rate |
+| ------ | ---------- | ---- | ------------------------- |
+| endonuclease |  232 |   68 | 94% |
+| exonuclease |   59 |   29 | 58% |
+| helicase |  113 |   71 | 70% |
+| hydrolase |   90 |   26 | 73% |
+| kinase |   66 |   23 | 86% |
+| ligase |   52 |   19 | 94% |
+| methyltransferase |   54 |   23 | 65% |
+| polymerase |  153 |   80 | 76% |
+| primase |   64 |   37 | 78% |
+| protease |   68 |   20 | 85% |
+| recombinase |   36 |    7 | 28% |
+| reductase |   94 |   65 | 90% |
+| synthase |   43 |   33 | 84% |
+| terminase |  139 |   92 | 94% |
+| transferase |  159 |   43 | 60% |
+| hypothetical protein | 3945 | 6302 | 53% |
