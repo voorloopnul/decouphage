@@ -7,7 +7,26 @@
 
  - [main branch](https://github.com/voorloopnul/decouphage/tree/main): stable version available in [pypi](https://pypi.org/project/decouphage/) and [dockerhub](https://hub.docker.com/r/voorloop/decouphage).
  - [dev branch](https://github.com/voorloopnul/decouphage/tree/dev): development branch with most recent version of decouphage.
- 
+
+## Table of contents
+
+- [Decouphage: the art of decorating a Phage genome by gluing feature cutouts into it.](#decouphage--the-art-of-decorating-a-phage-genome-by-gluing-feature-cutouts-into-it)
+    + [Relevant branches](#relevant-branches)
+  * [Description](#description)
+    + [Highlights](#highlights)
+  * [Methods and Validation](#methods-and-validation)
+    + [Validation](#validation)
+  * [How can I use decouphage?](#how-can-i-use-decouphage-)
+    + [Options](#options)
+    + [I want to discover and annotate a lot of ORFs:](#i-want-to-discover-and-annotate-a-lot-of-orfs-)
+    + [I want to use prodigal to find my genes:](#i-want-to-use-prodigal-to-find-my-genes-)
+    + [I have a genbank with poor annotation and want more:](#i-have-a-genbank-with-poor-annotation-and-want-more-)
+  * [Installation](#installation)
+    + [Ubuntu](#ubuntu)
+    + [Docker](#docker)
+  * [Databases](#databases)
+    + [Downloading database](#downloading-database)
+    + [Making custom databases](#making-custom-databases)
 
 ## Description
 
@@ -57,8 +76,8 @@ will agree with the products given by rast at rates up to 94%:
 A precise comparison of product-to-position is difficult given differences in spelling, typos, synonyms, and interchangeable 
 names, but the table above can give a good sense of the similarities.
 
-To corroborate the higher number of meaningful annotations that Decouphage gives, we also checked for "hypotheical proteins",
-and "phage protein" assignments that often don't carry any relevant information:
+To corroborate the surplus of annotations that decouphage achieve, we also checked for "hypotheical proteins",
+and "phage protein":
 
 
 | Product | Decouphage | Rast | Agreement rate with RAST |
