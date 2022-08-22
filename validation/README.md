@@ -28,7 +28,7 @@
 
 ## Example output
 
-![alt text](decouphage_image_01.png?raw=true)
+![alt text](../assets/decouphage_image_01.png?raw=true)
 
 
 | Enzyme | Decouphage | Rast | Decouphage agreement rate |

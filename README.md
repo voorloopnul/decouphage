@@ -40,6 +40,7 @@ everything else is optional.
  - Decouphage is fast, using a Macbook **most phage genomes can be annotated in less than a minute**.
  - Uses ncbi NR database containing non-identical sequences from GenBank CDS translations, PDB, Swiss-Prot, PIR, and PRF. 
  
+![alt text](assets/decouphage_web.gif)
 
 ## Methods and Validation
 
@@ -54,7 +55,7 @@ praised for its good Prokaryotic annotation capabilities.
 
 Decouphage outperforms RAST when calling some of the most relevant product categories:
 
-![alt text](validation/decouphage_image_01.png?raw=true)
+![alt text](assets/decouphage_image_01.png?raw=true)
 
 The CDS annotation agreement between Decouphage and RAST is high, reaching up to 94% for some products:
 
