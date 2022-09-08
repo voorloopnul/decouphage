@@ -137,11 +137,12 @@ class Pipeline(object):
                 contig.features.append(feature)
 
             for trna in self.trna_map[contig_label]:
-                idx, start, end, label = trna.split("_")
+                idx, start, end, rna_type, anti_codon = trna.split("_")
                 feature = SeqFeature(
                     FeatureLocation(int(start) - 1, int(end)),
+                    strand=1 if int(end) > int(start) else 0,
                     type="tRNA",
-                    qualifiers={"name": label},
+                    qualifiers={"product": f"{rna_type}-{anti_codon}"},
                 )
                 contig.features.append(feature)
 

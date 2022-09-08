@@ -84,8 +84,7 @@ def run_trnascan(path):
 
     for line in rt[:-1]:
         trna = line.split("\t")
-
-        orf = "_".join([f">{trna[1]}", str(trna[2].strip()), str(trna[3].strip()), trna[4].strip()])
+        orf = "_".join([f">{trna[1]}", str(trna[2].strip()), str(trna[3].strip()), trna[4].strip(), trna[5].strip()])
         features[trna[0].strip()].append(orf)
 
     return features
