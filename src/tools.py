@@ -70,3 +70,22 @@ def run_phanotate(path):
             features[contig].append(orf)
 
     return features
+
+
+def run_trnascan(path):
+    """
+    """
+
+    trnascan_cmd = f"tRNAscan-SE -B -q --brief {path}"
+    rt = os.popen(trnascan_cmd).read()
+    rt = rt.split("\n")
+
+    features = defaultdict(list)
+
+    for line in rt[:-1]:
+        trna = line.split("\t")
+
+        orf = "_".join([f">{trna[1]}", str(trna[2].strip()), str(trna[3].strip()), trna[4].strip()])
+        features[trna[0].strip()].append(orf)
+
+    return features

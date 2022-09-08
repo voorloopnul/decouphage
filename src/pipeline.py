@@ -42,11 +42,13 @@ class Pipeline(object):
 
         self.genome = None
         self.orf_map = None
+        self.trna_map = None
         self.run()
 
     def run(self):
         self.load_genome_from_file()
         self.annotate_contigs()
+        self.trna_map = self.rna_calling()
         self.orf_map = self.orf_calling()
         self.load_features()
         self.prepare_query_file()
@@ -100,6 +102,9 @@ class Pipeline(object):
             # Leave .id empty to mimic prokka output.
             contig.id = ""
 
+    def rna_calling(self):
+        return tools.run_trnascan(self.tmp_input_fna_file)
+
     def orf_calling(self):
         logger.info(f"[2/{total_steps}] Starting ORF calling")
         # Don't call ORFs, just copy it from the input gbk file.
@@ -120,6 +125,7 @@ class Pipeline(object):
         logger.info(f"[3/{total_steps}] Loading features into biopython SeqFeature")
         for contig_label, orf_list in self.orf_map.items():
             contig = self.genome[contig_label]
+
             for orf in orf_list:
                 idx, start, end, strand = orf.split("_")
                 feature = SeqFeature(
@@ -127,35 +133,52 @@ class Pipeline(object):
                     strand=1 if strand == "+" else -1,
                     type="CDS",
                     qualifiers={},
-                    id=idx[1:],
                 )
                 contig.features.append(feature)
+
+            for trna in self.trna_map[contig_label]:
+                idx, start, end, label = trna.split("_")
+                feature = SeqFeature(
+                    FeatureLocation(int(start) - 1, int(end)),
+                    type="tRNA",
+                    qualifiers={"name": label},
+                )
+                contig.features.append(feature)
+
+        # order features based on start position
+        for contig in self.genome.values():
+            contig.features.sort(key=lambda x: x.location.start, reverse=False)
+
+        # give feature id an incremental count
+        idx = 1
+        for contig in self.genome.values():
+            for feature in contig.features:
+                feature.id = idx
+                idx += 1
 
     def prepare_query_file(self):
         logger.info(f"[4/{total_steps}] Preparing blast query file")
         with open(self.tmp_query_faa_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
-                    fh.write(f">{feature.id}\n")
-                    fh.write(self.clean_sequence(feature, contig) + "\n")
+                    if feature.type == "CDS":
+                        fh.write(f">{feature.id}\n")
+                        fh.write(self.clean_sequence(feature, contig) + "\n")
 
     def enrich_features(self, qualifiers):
         logger.info(f"[7/{total_steps}] Enriching features")
         for contig in self.genome.values():
             for feature in contig.features:
-                blast_result = qualifiers.get(int(feature.id), {})
-
-                product = blast_result.get("stitle", "hypothetical protein")
-
                 tag = f"{self.locus_tag}_{int(feature.id):04d}"
+                quals = feature.qualifiers
+                quals["feature"] = feature.id
+                quals["locus_tag"] = tag
 
-                quals = {
-                    "feature": feature.id,
-                    "product": product,
-                    "locus_tag": tag,
-                    "translation": self.clean_sequence(feature, contig),
-                    "protein_id": blast_result.get("sseqid", "N/A"),
-                }
+                if feature.type == "CDS":
+                    blast_result = qualifiers.get(int(feature.id), {})
+                    quals["product"] = blast_result.get("stitle", "hypothetical protein"),
+                    quals["translation"] = self.clean_sequence(feature, contig)
+                    quals["protein_id"] = blast_result.get("sseqid", "N/A")
                 feature.qualifiers = quals
 
     @staticmethod
