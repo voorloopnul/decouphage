@@ -13,7 +13,7 @@ from src.core import cds_calling_from_genbank, get_database_default_path, valida
 from src.output import write_gbk
 
 logger = logging.getLogger(__name__)
-total_steps = 8
+total_steps = 9
 
 
 class Pipeline(object):
@@ -47,20 +47,30 @@ class Pipeline(object):
 
     def run(self):
         self.load_genome_from_file()
-        self.annotate_contigs()
-        self.trna_map = self.rna_calling()
+        self.add_contig_metadata()
+
+        logger.info(f"[2/{total_steps}] Starting ORF calling")
         self.orf_map = self.orf_calling()
+
+        logger.info(f"[3/{total_steps}] Starting tRNA calling")
+        self.trna_map = self.rna_calling()
+
+        logger.info(f"[4/{total_steps}] Loading features into biopython SeqFeature")
         self.load_features()
+
+        logger.info(f"[5/{total_steps}] Preparing blast query file")
         self.prepare_query_file()
 
-        logger.info(f"[5/{total_steps}] Running blast with {self.database}")
+        logger.info(f"[6/{total_steps}] Running blast with {self.database}")
         tools.run_blast(self.blast_threads, self.tmp_query_faa_file, self.tmp_blast_tsv_file, self.database)
 
-        logger.info(f"[6/{total_steps}] Selecting best hits")
+        logger.info(f"[7/{total_steps}] Selecting best hits")
         qualifiers = {record["qseqid"]: record for record in Annotate(self.tmp_blast_tsv_file).run()}
+
+        logger.info(f"[8/{total_steps}] Enriching features")
         self.enrich_features(qualifiers)
 
-        logger.info(f"[8/{total_steps}] Writing output.")
+        logger.info(f"[9/{total_steps}] Writing output.")
         write_gbk(self.genome.values(), self.output_file)
 
     def load_genome_from_file(self):
@@ -95,7 +105,7 @@ class Pipeline(object):
             logger.error(f"A duplicated record was found: {duplicated_contig}")
             sys.exit(1)
 
-    def annotate_contigs(self):
+    def add_contig_metadata(self):
         today_date = str(datetime.date.today().strftime("%d-%b-%Y")).upper()
         for contig in self.genome.values():
             contig.annotations = {"molecule_type": "DNA", "date": today_date, "accessions": ""}
@@ -106,7 +116,6 @@ class Pipeline(object):
         return tools.run_trnascan(self.tmp_input_fna_file)
 
     def orf_calling(self):
-        logger.info(f"[2/{total_steps}] Starting ORF calling")
         # Don't call ORFs, just copy it from the input gbk file.
         if self.merge_gbk:
             logger.warning(f" - decouphage will skip this step and use CDS from Genbank file.")
@@ -122,7 +131,6 @@ class Pipeline(object):
         return tools.run_phanotate(self.tmp_input_fna_file)
 
     def load_features(self):
-        logger.info(f"[3/{total_steps}] Loading features into biopython SeqFeature")
         for contig_label, orf_list in self.orf_map.items():
             contig = self.genome[contig_label]
 
@@ -158,7 +166,6 @@ class Pipeline(object):
                 idx += 1
 
     def prepare_query_file(self):
-        logger.info(f"[4/{total_steps}] Preparing blast query file")
         with open(self.tmp_query_faa_file, "a") as fh:
             for contig in self.genome.values():
                 for feature in contig.features:
@@ -167,7 +174,6 @@ class Pipeline(object):
                         fh.write(self.clean_sequence(feature, contig) + "\n")
 
     def enrich_features(self, qualifiers):
-        logger.info(f"[7/{total_steps}] Enriching features")
         for contig in self.genome.values():
             for feature in contig.features:
                 tag = f"{self.locus_tag}_{int(feature.id):04d}"
