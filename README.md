@@ -66,8 +66,8 @@ The CDS annotation agreement between Decouphage and RAST is high, reaching up to
 | terminase | 94% |
 | transferase | 60% |
 
-A precise comparison of product-to-position is difficult given differences in spelling, typos, synonyms, and 
-interchangeable names, but the table above can give a good sense of the similarities.
+**A precise comparison of product-to-position is difficult given differences in spelling, typos, synonyms, and 
+interchangeable names, but the table above can give a good idea of the similarities.**
 
 To corroborate the surplus of annotations that decouphage achieves, the amount of "hypothetical protein" and 
 "Phage protein" was also checked:
@@ -83,11 +83,6 @@ To corroborate the surplus of annotations that decouphage achieves, the amount o
 
 This table shows that Decouphage potentially assigns 2x more meaningful products than RAST when annotating a phage 
 genome.
-
-**DISCLAIMER: While decouphage validation appears to outperform RAST when annotating phages, remember that RAST is - 
-by far - a more advanced tool with consolidated methods. The results shown here are more a reflection of the database 
-used than the underlying algorithms.** 
-
 
 ## How can I use decouphage
 
@@ -132,13 +127,13 @@ Install decouphage:
 
     pip install decouphage
 
-Install ncbi-blast+
+*(Required)* Install ncbi-blast+
     
     apt install ncbi-blast+
 
-Optional: Install dependencies:
+*(Optional)* Install dependencies:
 
-    apt install prodigal
+    apt install prodigal trnascan-se
 
 ### Docker
 
