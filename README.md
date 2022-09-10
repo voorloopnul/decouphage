@@ -127,13 +127,13 @@ Install decouphage:
 
     pip install decouphage
 
-Install ncbi-blast+
+Required: Install ncbi-blast+
     
     apt install ncbi-blast+
 
 Optional: Install dependencies:
 
-    apt install prodigal
+    apt install prodigal trnascan-se
 
 ### Docker
 
