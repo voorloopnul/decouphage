@@ -15,10 +15,11 @@ setuptools.setup(
       scripts=['decouphage.py'],
       python_requires='>=3.4',
       install_requires=[
-            "biopython==1.79",
-            "phanotate==1.5.0",
-            "pandas==1.4.2",
-            "click==8.1.3",
-            "pytest==7.1.2"
+            "biopython >=1.79",
+            "phanotate >=1.5.0",
+            "pandas >=1.4.2",
+            "click >=8.1.3",
+            "alive-progress >=2.4.1",
+            "requests >=2.27.1",
       ]
 )
