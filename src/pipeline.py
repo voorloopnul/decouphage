@@ -146,9 +146,12 @@ class Pipeline(object):
 
             for trna in self.trna_map[contig_label]:
                 idx, start, end, rna_type, anti_codon = trna.split("_")
+                start, end = int(start), int(end)
+                strand = 1 if end > start else -1
+                positions = [start, end]
                 feature = SeqFeature(
-                    FeatureLocation(int(start) - 1, int(end)),
-                    strand=1 if int(end) > int(start) else 0,
+                    FeatureLocation(min(positions) - 1, max(positions)),
+                    strand=strand,
                     type="tRNA",
                     qualifiers={"product": f"{rna_type}-{anti_codon}"},
                 )
