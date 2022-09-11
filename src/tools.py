@@ -1,3 +1,4 @@
+import subprocess
 from collections import defaultdict
 import logging
 import os
@@ -22,8 +23,11 @@ def run_blast(threads, query_file, blast_file, database):
         "-task", "blastp-fast",
         "-out", blast_file
     ]
-    logger.debug(blast_cmd)
-    os.system(" ".join(blast_cmd))
+
+    rt = subprocess.Popen(" ".join(blast_cmd), shell=True)
+    rt.communicate()
+    if rt.returncode != 0:
+        sys.exit(0)
 
 
 def run_prodigal(path):
@@ -32,12 +36,18 @@ def run_prodigal(path):
     ['>1_70_930_+', '>2_1282_2259_+', '>3_2276_2689_+', '>4_3116_3667_-', ... ]
     """
     prodigal_cmd = f"prodigal -i {path} -f sco -p meta"
-    rt = os.popen(prodigal_cmd).read()
-    rt = rt.split("\n")
+    try:
+        rt = subprocess.Popen(prodigal_cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError:
+        logging.error("Prodigal not found!")
+        sys.exit(1)
 
+    output, error = rt.communicate()
+    output = output.decode("utf-8")
     features = defaultdict(list)
+
     idx = 1
-    for line in rt:
+    for line in output.split("\n"):
         if "seqhdr" in line:
             contig = line.split('"')[1].split(" ")[0]
         if line.startswith(">"):
