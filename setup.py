@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
       name='decouphage',
-      version='0.0.4',
+      version='0.0.5',
       description='decouphage - A tool to annotate phage genomes.',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -12,7 +12,7 @@ setuptools.setup(
       author_email='voorloop@gmail.com',
       url='https://github.com/voorloopnul/decouphage',
       packages=setuptools.find_packages(),
-      scripts=['decouphage.py'],
+      scripts=['decouphage'],
       python_requires='>=3.4',
       install_requires=[
             "biopython >=1.79",
