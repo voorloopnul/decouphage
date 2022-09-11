@@ -23,8 +23,14 @@ def run_blast(threads, query_file, blast_file, database):
         "-task", "blastp-fast",
         "-out", blast_file
     ]
-    logger.debug(blast_cmd)
-    os.system(" ".join(blast_cmd))
+
+    try:
+        rt = subprocess.Popen(" ".join(blast_cmd), shell=True)
+        rt.communicate()
+
+    except FileNotFoundError:
+        logging.error("blast not found!")
+        sys.exit(1)
 
 
 def run_prodigal(path):
