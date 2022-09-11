@@ -7,7 +7,7 @@ def test_path_for_default_database():
 
 def test_can_identify_file_type():
     assert "GENBANK" == validate_input("tests/data/NC_010391.gb")
-    assert "FASTA" == validate_input("tests/data/two_contigs.fasta")
+    assert "FASTA" == validate_input("tests/data/two_contigs.fa")
 
 
 def test_no_orf_calling():
